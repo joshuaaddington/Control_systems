@@ -6,12 +6,20 @@ import numpy as np
 a = np.array([1, 2, 3])
 b = np.array([[1], [2]])
 result = a + b
+print("result is:", result)
 
 #TODO answer the following questions as comments below:
 # What is the shape of a?
 # What is the shape of b?
 # What is the shape of result?
 # Why did this happen? and what occurred? 
+
+#######################################################################
+# a is a 1D array with 3 elements, b is a 2D array with 2 rows and 1 column.
+# the result is a 2d array with 2 rows and 3 columns.
+# this happened because of broadcasting. numpy tries to match the sizes of the arrays and effective turns a into an array: ([1,2,3],[1,2,3])
+# it turns b into: ([1,1,1],[2,2,2]) then adds them.
+#######################################################################
 
 
 

@@ -53,10 +53,18 @@ print('total velocity is:', total_robot_vel_np)
 #%%
 # Now we want to calculate the magnitude of the total velocity of the tip of the robot arm.
 # we can do this by calculating the norm of the total velocity vector as follows: 
-total_robot_vel_magnitude = np.sqrt(total_robot_vel_np*total_robot_vel_np)
+total_robot_vel_magnitude = np.sqrt(total_robot_vel_np@total_robot_vel_np)
+print('magnitude of total velocity is:', total_robot_vel_magnitude)
 
 # did this give the answer you expected? If not, why not? Can you fix it? 
 
 # TODO put your answer here.
+#######################################
+# No, the output of the total velocity is still of the same shape as the input arrays.
+# It should be a single value, the magnitude of the total velocity.
+# You can fix it be either using numpys linalg.norm function or by using matrix multiplication and the sqrt function
+# That uses the @ symbol. Either of these methods give the correct output.
+#######################################
 
 
+# %%
