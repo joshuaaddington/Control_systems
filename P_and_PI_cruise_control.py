@@ -9,8 +9,8 @@ v_des = 20.0 # m-s
 
 # define gains that are part of the controller, and will change the way 
 # the system behaves
-kp = 1 # proportional gain
-ki = 0.0 # integral gain
+kp = 300 # proportional gain
+ki = 5000 # integral gain
 u_cmd = v_des*b #open-loop command (see in-class calculation of this value)
 
 # %%cd
