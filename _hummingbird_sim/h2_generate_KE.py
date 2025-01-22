@@ -22,13 +22,13 @@ q_dot = q.diff(t)
 
 # TODO define the position of each mass in body frame, then rotate
 # it into the world or inertial frame. 
-# p1_in_2 = 
+# p1_in_b = 
 # p1_in_w = 
 
-# p2_in_1 = 
+# p2_in_2 = 
 # p2_in_w = 
 
-# p3_in_b = 
+# p3_in_1 = 
 # p3_in_w = 
 
 
