@@ -40,3 +40,7 @@ K = simplify(0.5*m1*v1.T*v1 + 0.5*m2*v2.T*v2 + 0.5*omega.T*J*omega)
 
 # just grabbing the scalar inside this matrix so that we can do L = K-P, since P is a scalar
 K = K[0,0]
+
+
+#%%
+display(Math(vlatex(K)))
