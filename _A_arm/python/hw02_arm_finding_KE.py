@@ -38,5 +38,6 @@ J = sp.diag(0, 1./12*m1*ell**2, 1./12*m1*ell**2)
 
 # calculate the kinetic energy and display it
 K = simplify(0.5*m1*v.T @ v + 0.5*omega.T @ R @ J @ R.T @ omega)
+K = K[0,0]
 
 display(Math(vlatex(K)))
