@@ -17,7 +17,7 @@ R = sp.Matrix([[sp.cos(theta), -sp.sin(theta), 0], [sp.sin(theta), sp.cos(theta)
 Omeg_mat = sp.simplify(R.diff(t)*R.T)
 omega = sp.Matrix([[Omeg_mat[2,1]], [Omeg_mat[0,2]], [Omeg_mat[1,0]]])
 
-J = sp.diag(0, 0, m*z**2)
+J = sp.diag(0, 0, m1*z**2)
 
 K = sp.simplify(0.5*m*v.T @ v + 0.5*omega.T @ R @ J @ R.T @ omega)
 display(Math(vlatex(K)))
