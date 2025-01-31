@@ -35,9 +35,7 @@ class armDynamics:
         # re-label states for readability
         theta = state[0][0]
         thetadot = state[1][0]
-        thetaddot = (3.0 / self.m / self.ell**2) * \
-                    (tau - self.b*thetadot \
-                     - self.m * self.g * self.ell / 2.0*np.cos(theta))
+        thetaddot = (3.0 / self.m / self.ell**2) * (tau - self.b*thetadot - self.m * self.g * self.ell / 2.0*np.cos(theta))
         xdot = np.array([[thetadot], [thetaddot]])
         return xdot
 

@@ -17,12 +17,12 @@ zdot0 = 0  # initial velocity of mass m/s
 # Simulation Parameters
 t_start = 0 # Start time of simulation
 t_end = 10  # End time of simulation
-Ts = .001  # sample time for simulation
-t_plot = .001 # the plotting and animation is updated at this rate
+Ts = .01  # sample time for simulation
+t_plot = .01 # the plotting and animation is updated at this rate
 
 # dirty derivative parameters
 # sigma =  # cutoff freq for dirty derivative
 
 # saturation limits
-F_max =  25 # Max force, N
+F_max =  200 # Max force, N
 

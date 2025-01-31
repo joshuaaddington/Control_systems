@@ -73,14 +73,9 @@ display(Math(vlatex(zdd_eom)))
 #%%
 import massParam as P
 
-# defining fixed parameters that are not states or inputs (like g, ell, m1, m2, b)
-# can be done like follows:
-# params = [(m1, P.m1), (m2, P.m2), (ell, P.ell), (g, P.g), (b, P.b)]  
-
-# but in this example, I want to keep the masses, length, and damping as variables so
-# that I can simulate uncertainty in those parameters in real life. 
-params = [(k, P.k), (m1, P.m), (b, P.b)]
-
+# If we want to define fixed parameters that are not states or inputs we can here
+# But I'm going to keep them as inputs to the equation for now just so that I can change stuff on the fly
+params = []
 
 # substituting parameters into the equations of motion
 zdd_eom = zdd_eom.subs(params)
@@ -98,11 +93,11 @@ import numpy as np
 
 # converting the function to a callable function that uses numpy to evaluate and 
 # return a list of state derivatives
-eom = sp.lambdify([state, ctrl_input], np.array(state_dot), 'numpy')
+eom = sp.lambdify([state, ctrl_input, m1, k, b], np.array(state_dot), 'numpy')
 
 # calling the function as a test to see if it works:
 cur_state = [0, 0]
 cur_input = [1]
-print("x_dot = ", eom(cur_state, cur_input))
+print("x_dot = ", eom(cur_state, cur_input, P.m, P.k, P.b))
 
 # %%
