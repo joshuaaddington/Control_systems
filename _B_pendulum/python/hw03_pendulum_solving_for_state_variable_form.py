@@ -118,3 +118,5 @@ dill.dump(eom, open("eom_case_study_B", "wb"))   #takes the function name "eom" 
 eom_test = dill.load(open("eom_case_study_B", "rb"))
 
 print("x_dot after reloading = ", eom(cur_state, cur_input, P.m1, P.m2, P.ell, P.b))
+
+# %%
