@@ -24,7 +24,7 @@ while t < P.t_end:  # main simulation loop
     # update animation and data plots at rate t_plot
     animation.update(pendulum.state)
     dataPlot.update(t, pendulum.state, u)
-    plt.pause(0.0001)  # allows time for animation to draw
+    plt.pause(0.01)  # allows time for animation to draw
 
 # Keeps the program from closing until the user presses a button.
 print('Press key to close')

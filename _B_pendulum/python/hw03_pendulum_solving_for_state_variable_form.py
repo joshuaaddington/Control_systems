@@ -22,6 +22,7 @@ L = simplify(K-P)
 #%%
 # Solution for Euler-Lagrange equations, but this does not include right-hand side (like friction and tau)
 EL_case_studyB = simplify( diff(diff(L, qdot), t) - diff(L, q) )
+#EL_case_studyB = simplify(L.diff(q_dot).diff(t) - L.diff(q))
 
 display(Math(vlatex(EL_case_studyB)))
 
@@ -66,6 +67,7 @@ display(Math(vlatex(thetadd_eom)))
 
 #%%
 import pendulumParam as P
+import numpy as np
 
 # defining fixed parameters that are not states or inputs (like g, ell, m1, m2, b)
 # can be done like follows:
@@ -81,11 +83,11 @@ zdd_eom = zdd_eom.subs(params)
 thetadd_eom = thetadd_eom.subs(params)
 
 # now defining the state variables that will be passed into f(x,u) 
-state = [z, theta, zd, thetad]
-ctrl_input = [F]
+state = np.array([z, theta, zd, thetad])
+ctrl_input = np.array([F])
 
 # defining the function that will be called to get the derivatives of the states
-state_dot = [zd, thetad, zdd_eom, thetadd_eom]
+state_dot = np.array([zd, thetad, zdd_eom, thetadd_eom])
 
 
 #%%
@@ -93,11 +95,11 @@ import numpy as np
 
 # converting the function to a callable function that uses numpy to evaluate and 
 # return a list of state derivatives
-eom = sp.lambdify([state, ctrl_input, m1, m2, ell, b], np.array(state_dot), 'numpy')
+eom = sp.lambdify([state, ctrl_input, m1, m2, ell, b], state_dot, 'numpy')
 
 # calling the function as a test to see if it works:
-cur_state = [0, 0, 0, 0]
-cur_input = [1]
+cur_state = np.array([0, 0, 0, 0])
+cur_input = np.array([1])
 print("x_dot = ", eom(cur_state, cur_input, P.m1, P.m2, P.ell, P.b))
 
 
@@ -117,4 +119,4 @@ dill.dump(eom, open("eom_case_study_B", "wb"))   #takes the function name "eom" 
 # we can then reload the function and test it again to make sure it works: 
 eom_test = dill.load(open("eom_case_study_B", "rb"))
 
-print("x_dot after reloading = ", eom(cur_state, cur_input, P.m1, P.m2, P.ell, P.b))
+print("x_dot after reloading = ", eom_test(cur_state, cur_input, P.m1, P.m2, P.ell, P.b))
