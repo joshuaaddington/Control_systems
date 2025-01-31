@@ -24,7 +24,7 @@ class massDynamics:
         # re-label states for readability
         z = state[0,0]
         zd = state[1,0]
-        zdd = (1/self.m) * (tau - self.b*zd) - (self.k*z)
+        zdd = (1/self.m) * (tau - self.b*zd - self.k*z)
         xdot = np.array([[zd], [zdd]])
         return xdot
         

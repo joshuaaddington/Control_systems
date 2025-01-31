@@ -3,10 +3,10 @@ import numpy as np
 # import control as cnt
 
 # Physical parameters of the  ballbeam known to the controller
-m1 =  1 # Mass of the block, kg
-m2 =   1 # mass of beam, kg
-length =  3 # length of beam, m
-g = 9.81  # gravity at sea level, m/s^2
+m1 =  .35 # Mass of the block, kg
+m2 =   2 # mass of beam, kg
+length =  .5 # length of beam, m
+g = 9.8  # gravity at sea level, m/s^2
 
 # parameters for animation
 width = 0.05  # width of block

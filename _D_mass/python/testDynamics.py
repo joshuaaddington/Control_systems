@@ -9,7 +9,7 @@ P.Ts = .01
 plant = dynamics()
 numTests = 0
 numTestsPassed = 0
-    
+
 # test all test cases
 for initial_state, input, true_state in TC.dynamics_test_cases:
     numTests += 1
