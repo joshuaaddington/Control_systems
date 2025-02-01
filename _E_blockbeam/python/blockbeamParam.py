@@ -13,10 +13,10 @@ width = 0.05  # width of block
 height = width*0.25  # height of block
 
 # Initial Conditions
-z0 = .25 # initial block position,m
-theta0 = np.pi/180  # initial beam angle,rads
-zdot0 =  .1 # initial speed of block along beam, m/s
-thetadot0 = 3 # initial angular speed of the beam,rads/s
+z0 = 0 # initial block position,m
+theta0 = 0  # initial beam angle,rads
+zdot0 =  0 # initial speed of block along beam, m/s
+thetadot0 = 0 # initial angular speed of the beam,rads/s
 
 # Simulation Parameters
 t_start =  0 # Start time of simulation

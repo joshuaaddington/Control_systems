@@ -30,8 +30,8 @@ class blockbeamAnimation:
                                               # be used to contain handles to the
                                               # patches and line objects.
                                               # Change the x,y axis limits
-        plt.axis([-P.length/5, P.length+P.length/5, -P.length, P.length])
-        plt.plot([0.0, P.length], [0.0, 0.0], 'k')    # Draw a base line
+        plt.axis([-P.ell/5, P.ell+P.ell/5, -P.ell, P.ell])
+        plt.plot([0.0, P.ell], [0.0, 0.0], 'k')    # Draw a base line
         # plt.xlabel('z')
 
         # add exit button
@@ -71,8 +71,8 @@ class blockbeamAnimation:
             self.handle[0].angle = theta*180.0/np.pi
 
     def drawBeam(self, theta):
-        X = [0, P.length*np.cos(theta)]  # X data points
-        Y = [0, P.length*np.sin(theta)]  # Y data points
+        X = [0, P.ell*np.cos(theta)]  # X data points
+        Y = [0, P.ell*np.sin(theta)]  # Y data points
         # When the class is initialized, a line object will be
         # created and added to the axes. After initialization, the
         # line object will only be updated.

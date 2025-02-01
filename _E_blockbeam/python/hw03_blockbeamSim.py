@@ -1,17 +1,17 @@
 import matplotlib.pyplot as plt
-import massParam as P
+import blockbeamParam as P
 from signalGenerator import signalGenerator
-from massAnimation import massAnimation
+from blockbeamAnimation import blockbeamAnimation
 from dataPlotter import dataPlotter
-from MassDynamics import massDynamics
+from blockbeamDynamics import blockbeamDynamics
 
-# instantiate mass, controller, and reference classes
-mass = massDynamics()
-force = signalGenerator(amplitude=10, frequency=1)
+# instantiate blockbeam, controller, and reference classes
+blockbeam = blockbeamDynamics()
+force = signalGenerator(amplitude=.5, frequency=1, y_offset = 11.5)
 
 # instantiate the simulation plots and animation
 dataPlot = dataPlotter()
-animation = massAnimation()
+animation = blockbeamAnimation()
 
 t = P.t_start  # time starts at t_start
 while t < P.t_end:  # main simulation loop
@@ -21,12 +21,12 @@ while t < P.t_end:  # main simulation loop
     while t < t_next_plot:  
         # Get referenced inputs from signal generators
         u = force.sin(t)        
-        y = mass.update(u)  # Propagate the dynamics
+        y = blockbeam.update(u)  # Propagate the dynamics
         t += P.Ts  # advance time by Ts
     
     # update animation and data plots
-    animation.update(mass.state)
-    dataPlot.update(t, mass.state, u)
+    animation.update(blockbeam.state)
+    dataPlot.update(t, blockbeam.state, u)
 
     # the pause causes the figure to be displayed during the simulation
     plt.pause(0.0001)  
