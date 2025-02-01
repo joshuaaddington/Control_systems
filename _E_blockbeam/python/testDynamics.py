@@ -1,3 +1,4 @@
+#%%
 # use this file to test your dynamics file
 import numpy as np
 from blockbeamDynamics import blockbeamDynamics as dynamics
@@ -9,7 +10,7 @@ P.Ts = .01
 plant = dynamics()
 numTests = 0
 numTestsPassed = 0
-    
+
 # test all test cases
 for initial_state, input, true_state in TC.dynamics_test_cases:
     numTests += 1
@@ -32,3 +33,5 @@ if numTestsPassed == numTests:
     print("\nExcellent work!! Your dynamics file has passed all of the tests!\n")
 else:
     print(f"\nDarn, only {numTestsPassed}/{numTests} of the tests passed... Keep it up! You'll get it!\n")
+
+# %%
