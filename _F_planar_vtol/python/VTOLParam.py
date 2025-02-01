@@ -2,12 +2,12 @@
 import numpy as np
 
 # Physical parameters of the  VTOL known to the controller
-mc =  4# kg
-mr =   2# kg
-Jc =  5 # kg m^2
-d =   1# m
-mu =  2 # kg/s
-g = 9.8  # m/s^2
+mc =  2 # kg
+mr = .25 # kg
+Jc =  .0042 # kg m^2
+d = .3 # m
+mu =  .1 # kg/s
+g = 9.81  # m/s^2
 F_wind = 0 # wind disturbance force is zero in initial homeworks
 
 # parameters for animation
@@ -17,8 +17,8 @@ length = 10.0
 z0 =  5 # initial lateral position
 h0 =  5 # initial altitude
 theta0 = 0 # initial roll angle
-zdot0 = .5  # initial lateral velocity
-hdot0 =  1 # initial climb rate
+zdot0 = 0  # initial lateral velocity
+hdot0 =  0 # initial climb rate
 thetadot0 = 0  # initial roll rate
 target0 = 0
 
@@ -29,7 +29,7 @@ Ts =  .01 # sample time for simulation
 t_plot = .01 # the plotting and animation is updated at this rate
 
 # saturation limits
-F_max = 100  # Max Force, N
+F_max = 1000  # Max Force, N
 
 # dirty derivative parameters
 # sigma =   # cutoff freq for dirty derivative
