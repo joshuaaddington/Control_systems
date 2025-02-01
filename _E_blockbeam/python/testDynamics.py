@@ -1,4 +1,3 @@
-#%%
 # use this file to test your dynamics file
 import numpy as np
 from blockbeamDynamics import blockbeamDynamics as dynamics
@@ -34,4 +33,3 @@ if numTestsPassed == numTests:
 else:
     print(f"\nDarn, only {numTestsPassed}/{numTests} of the tests passed... Keep it up! You'll get it!\n")
 
-# %%

@@ -1,4 +1,3 @@
-#%%
 import numpy as np
 import blockbeamParam as P
 import scipy.integrate as scint
@@ -17,23 +16,18 @@ class blockbeamDynamics:
         # Sample rate
         self.Ts = P.Ts
         # Max force input
-        self.force_limit = P.F_max
+        self.torque_limit = P.F_max
 
     def f (self, state, tau):
         # Return xdot = f(x,u), the system state update equations
         # re-label states for readability
-        z = state[0][0]
-        zd = state[1][0]
-        theta = state[2][0]
-        thetad = state[3][0]
-        zdd = eom(state, tau, self.m1, self.m2)[0][0]
-        thetadd = eom(state, tau, self.m1, self.m2)[1][0]
-        print("zd = ", zd, "type is: ", type(zd), "shape is: ", zd.shape)
-        print("zdd = ", zdd, "type is: ", type(zdd), "shape is: ", zdd.shape)
-        print("thetad = ", thetad, "type is: ", type(thetad), "shape is: ", thetad.shape)
-        print("thetadd = ", thetadd, "type is: ", type(thetadd), "shape is: ", thetadd.shape)
+        z = state[0,0]
+        zd = state[1,0]
+        theta = state[2,0]
+        thetad = state[3,0]
+        zdd = (z*thetad**2 - 9.8*np.sin(theta))
+        thetadd = ((3 * tau * np.cos(theta) - 58.8 * self.m1 * z * np.cos(theta) - 12.0 * self.m1 * z * thetad * zd - 14.7 * self.m2 * np.cos(theta)) / (6.0 * self.m1 * z**2 + 0.5 * self.m2))
         xdot = np.array([[zd], [zdd], [thetad], [thetadd]])
-        print(xdot)
         return xdot
         
     def rk4_step(self, u):
@@ -45,8 +39,7 @@ class blockbeamDynamics:
         self.state = self.state + self.Ts / 6 * (F1 + 2*F2 + 2*F3 + F4)
 
     def update(self, u):
-        u = np.array(saturate(u, self.force_limit)).reshape(1,1)
-        print("u = ", u, "type is: ", type(u), "shape is: ", u.shape)
+        u = saturate(u, self.torque_limit)
         self.rk4_step(u)
         y = np.array(self.state[0,0])
         return y
@@ -57,10 +50,3 @@ def saturate(u, limit):
     if abs(u) > limit:
         u = limit * np.sign(u)
     return u
-
-#%% 
-blockbeam = blockbeamDynamics()
-blockbeam.state = np.array([[0.25], [0.1], [np.pi/180], [3]])
-u = 1
-blockbeam.update(u)
-# %%

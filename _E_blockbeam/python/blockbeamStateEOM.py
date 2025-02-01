@@ -42,7 +42,7 @@ Ke = simplify(0.5*m1*v1.T @ v1 + 0.5*m2*v2.T @ v2 + 0.5*omega.T @ R @ J @ R.T @ 
 # just grabbing the scalar inside this matrix so that we can do L = K-P, since P is
 Ke = Ke[0,0]
 
-Pe = m1*g*p1[0] + m2*g*p2[0]
+Pe = m1*g*p1[1] + m2*g*p2[1]
 
 L = sp.simplify(Ke - Pe)
 
@@ -66,7 +66,7 @@ thetadd = thetad.diff(t)
 F = symbols('F')
 
 # defining the right-hand side of the equation and combining it with E-L part
-RHS = Matrix([[F],[0]])
+RHS = Matrix([[0],[F*ell*cos(theta)]])
 full_eom = EL - RHS
 
 # finding and assigning zdd and thetadd
@@ -80,6 +80,8 @@ result = simplify(sp.solve(full_eom, (zdd, thetadd)))
 # by using the name of the variable that we were solving for
 zdd_eom = result[zdd]  # EOM for zdd, as a function of states and inputs
 thetadd_eom = result[thetadd]  # EOM for thetadd, as a function of states and inputs
+display(Math(vlatex(zdd_eom)))
+display(Math(vlatex(thetadd_eom)))
 
 #%% [markdown]
 # OK, now we can get the state variable form of the equations of motion.
@@ -94,6 +96,9 @@ params = [(g, P.g), (ell, P.ell)]
 # substituting parameters into the equations of motion
 zdd_eom = zdd_eom.subs(params)
 thetadd_eom = thetadd_eom.subs(params)
+print("after subsituting parameters")
+display(Math(vlatex(zdd_eom)))
+display(Math(vlatex(thetadd_eom)))
 
 # now defining the state variables that will be passed into f(x,u) 
 state = [z, zd, theta, thetad]
@@ -101,6 +106,7 @@ ctrl_input = [F]
 
 # defining the function that will be called to get the derivatives of the states
 state_dot = [zd, zdd_eom, thetad, thetadd_eom]
+# display(Math(vlatex(Matrix(state_dot))))
 
 
 #%%
@@ -113,6 +119,6 @@ eom = sp.lambdify([state, ctrl_input, m1, m2], np.array(state_dot), 'numpy')
 # calling the function as a test to see if it works:
 cur_state = [0, 0, 0, 0]
 cur_input = [1]
-print("x_dot = ", eom(cur_state, cur_input, P.m1, P.m2))
+# print("x_dot = ", eom(cur_state, cur_input, P.m1, P.m2))
 
 # %%
