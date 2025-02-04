@@ -45,22 +45,20 @@ class HummingbirdDynamics:
         y = self.h()  # return the corresponding output
         return y
 
-    def f(self, state: np.ndarray, pwms: np.ndarray):
+    def f(self, state: np.ndarray, input: np.ndarray):
         # Return xdot = f(x,u)
         phidot = state[3][0]
         thetadot = state[4][0]
         psidot = state[5][0]
-        pwm_left = pwms[0][0]
-        pwm_right = pwms[1][0]
+        f_l = input[0][0]
+        f_r = input[1][0]
 
         # The equations of motion go here
         M = self._M(state)
         C = self._C(state)
         partialP = self._partialP(state)
 
-        force = self.km * (pwm_left + pwm_right)
-        torque = self.d * self.km * (pwm_left - pwm_right)
-        tau = self._tau(state, force, torque)
+        tau = self._tau(state, f_l, f_r)
         B = self._B()
 
         qddot = np.linalg.inv(M) @ (-C - partialP + tau - B @ state[3:6])
@@ -79,7 +77,7 @@ class HummingbirdDynamics:
         return xdot
 
     def h(self):
-        # FIXME Fill in this function
+        # TODO Fill in this function
         # return y = h(x)
         phi = 
         theta = 
@@ -96,7 +94,7 @@ class HummingbirdDynamics:
         self.state = self.state + P.Ts / 6 * (F1 + 2*F2 + 2*F3 + F4)
 
     def _M(self, state: np.ndarray):
-        # FIXME Fill in this function
+        # TODO Fill in this function
         phi = state[0][0]
         theta = state[1][0]
         psi = state[2][0]
@@ -116,7 +114,7 @@ class HummingbirdDynamics:
                       ])
 
     def _C(self, state: np.ndarray):
-        # FIXME Fill in this function
+        # TODO Fill in this function
         #extact any necessary variables from the state
 
         # Return the C matrix
@@ -126,7 +124,7 @@ class HummingbirdDynamics:
                 ])
         
     def _partialP(self, state: np.ndarray):
-        # FIXME Fill in this function
+        # TODO Fill in this function
         #extact any necessary variables from the state
 
         # Return the partialP array
@@ -135,7 +133,7 @@ class HummingbirdDynamics:
                         [],
                         ])
     
-    def _tau(self, state: np.ndarray, force: float, torque: float):
+    def _tau(self, state: np.ndarray, f_l: float, f_r: float):
         """
         Returns the tau matrix as defined in the hummingbird manual.
 
@@ -143,16 +141,14 @@ class HummingbirdDynamics:
         ----------
         state : numpy.ndarray
             The state of the hummingbird. Contains phi, theta, psi, and their derivatives.
-        force : float
-            force = (fl + fr). e.g. the second element of the tau matrix becomes
-            lT * force * cos(phi) using the above definition.
-        torque : float
-            torque = d(fl - fr). e.g. the first element of teh tau matrix just
-            becomes torque, using the definition above.
+        f_l : float
+            The force on the left rotor.
+        f_r : float
+            The force on the right rotor.
 
         """
-        # FIXME Fill in this function
-        #extract any necessary variables from the state
+        # TODO Fill in this function
+        # extract any necessary variables from the state
 
         # Return the tau matrix
         return np.array([[],
@@ -160,7 +156,7 @@ class HummingbirdDynamics:
                         []])
     
     def _B(self):
-        # FIXME Fill in this function
+        # TODO Fill in this function
         # This needs no variables from the state
         
         # Return the B matrix

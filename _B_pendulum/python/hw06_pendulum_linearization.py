@@ -10,8 +10,8 @@ from hw03_pendulum_solving_for_state_variable_form import *
 # defining derivative of states, states, and inputs symbolically
 ### for this first one, keep in mind that zdd_eom is actually a full
 ### row of equations, while zdd is just the symbolic variable itself. 
-state_variable_form = Matrix([[zdd_eom], [zd], [thetadd_eom], [thetad]])
-states = Matrix([[zd], [z], [thetad], [theta]])
+state_variable_form = Matrix([[zd], [thetad], [zdd_eom], [thetadd_eom]])
+states = Matrix([[z], [theta], [zd], [thetad]])
 inputs = Matrix([[F]])
 
 
