@@ -53,9 +53,11 @@ class blockbeamAnimation:
             self.flagInit = False
 
     def drawBlock(self, z, theta):
-        x = z*np.cos(theta) - P.width/2.0*np.sin(theta)
-        y = z*np.sin(theta) + P.height/2.0*np.cos(theta)
-        xy = (x, y)  # bottom left of block
+        gap = 0.005
+        lower_left_corner_unrotated = np.array([z - 0.5*P.width, gap])
+        R = np.array([[np.cos(theta), -np.sin(theta)],
+                      [np.sin(theta), np.cos(theta)]])
+        xy = R @ lower_left_corner_unrotated
         # When the class is initialized, a Rectangle patch object will
         # be created and added to the axes. After initialization, the
         # patch object will only be updated.
@@ -68,7 +70,7 @@ class blockbeamAnimation:
             self.ax.add_patch(self.handle[0])  # Add the patch to the axes
         else:
             self.handle[0].xy = xy  # "set" function, or "set_xy" don't work
-            self.handle[0].angle = theta*180.0/np.pi
+            self.handle[0].angle = np.degrees(theta)
 
     def drawBeam(self, theta):
         X = [0, P.length*np.cos(theta)]  # X data points
