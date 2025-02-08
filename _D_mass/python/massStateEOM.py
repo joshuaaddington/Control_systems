@@ -33,7 +33,7 @@ L = sp.simplify(Ke - Pe)
 # Solution for Euler-Lagrange equations, but this does not include right-hand side (like friction and tau)
 EL = simplify( diff(diff(L, qdot), t) - diff(L, q) )
 
-display(Math(vlatex(EL)))
+# display(Math(vlatex(EL)))
 
 
 
@@ -64,7 +64,7 @@ result = simplify(sp.solve(full_eom, (zdd)))
 # by using the name of the variable that we were solving for
 zdd_eom = result[zdd]  # EOM for zdd, as a function of states and inputs
 
-display(Math(vlatex(zdd_eom)))
+# display(Math(vlatex(zdd_eom)))
 
 
 #%% [markdown]
@@ -81,12 +81,13 @@ params = []
 zdd_eom = zdd_eom.subs(params)
 
 # now defining the state variables that will be passed into f(x,u) 
-state = [z, zd]
-ctrl_input = [F]
+state = sp.Matrix([[z], [zd]])
+ctrl_input = sp.Matrix([[F]])
 
 # defining the function that will be called to get the derivatives of the states
-state_dot = [zd, zdd_eom]
+state_dot = sp.Matrix([[zd], [zdd_eom]])
 
+# display(Math(vlatex(state_dot)))
 
 #%%
 import numpy as np

@@ -66,37 +66,31 @@ W3 = find_coeffs(omega_3, q_dot)
 
 #%%
 # TODO define the inertia tensors for each rigid body
-J1 = sp.diag(0.000189, 0.001953, 0.001894)
-J1x = 0.000189
-J1y = 0.001953
-J1z = 0.001894
-J2 = sp.diag(0.000231, 0.003274, 0.003416)
-J2x = 0.000231
-J2y = 0.003274
-J2z = 0.003416
-J3 = sp.diag(0.0002222, 0.0001956, 0.000027)
-J3x = 0.0002222
-J3y = 0.0001956
-J3z = 0.000027
+J1x = sp.symbols('J1x')
+J1y = sp.symbols('J1y')
+J1z = sp.symbols('J1z')
+J2x = sp.symbols('J2x')
+J2y = sp.symbols('J2y')
+J2z = sp.symbols('J2z')
+J3x = sp.symbols('J3x')
+J3y = sp.symbols('J3y')
+J3z = sp.symbols('J3z')
 
+J1 = sp.diag(J1x, J1y, J1z)
+J2 = sp.diag(J2x, J2y, J2z)
+J3 = sp.diag(J3x, J3y, J3z)
 
 # TODO calculate M using the masses and the V, W, R, and J matrices
 M = sp.zeros(3,3)
-M22 = -J1y*sp.sin(phi)**2 + J1y + J1z*sp.sin(phi)**2 + J2y + m1*ell_1**2 + m2*ell_2**2
-M23 = (J1y - J1z)*sp.sin(phi)*sp.cos(phi)*sp.cos(theta)
-M33 = -J1x*sp.cos(theta)**2 + J1x - J1y*sp.cos(phi)**2*sp.cos(theta)**2 + J1y*sp.cos(theta)**2 + J1z*sp.cos(phi)**2*sp.cos(theta)**2 - J2x*sp.cos(theta)**2 \
-    + J2x + J2z*sp.cos(theta)**2 + J3z + ell_1**2*m1*sp.cos(theta)**2 + ell_2**2*m2*sp.cos(theta)**2 + ell_3x**2*m3 + ell_3y**2*m3
-
-M = sp.Matrix([
-    [J1x,                  0,   -J1x*sp.sin(theta)],
-    [0,                  M22,   M23               ],
-    [-J1x*sp.sin(theta), M23,   M33               ]
-])
+M += m1*V1.T*V1 + W1.T*R1*J1*R1.T*W1
+M += m2*V2.T*V2 + W2.T*R2*J2*R2.T*W2
+M += m3*V3.T*V3 + W3.T*R3*J3*R3.T*W3
+    
 
 
 # simplifying functions and displaying the result
-M = sp.simplify(M)
 M = sp.trigsimp(M)
+M = sp.simplify(M)
 M = sp.expand_trig(M)
 display(Math(vlatex(M)))
 # %%

@@ -17,8 +17,8 @@ animation = HummingbirdAnimation()
 t = P.t_start  # time starts at t_start
 while t < P.t_end:  # main simulation loop
     # set variables
-    phi = phi_ref.sin(t)
-    theta = 0#theta_ref.sin(t)
+    phi = 0#phi_ref.sin(t)
+    theta = -theta_ref.sin(t)
     psi = 0#psi_ref.sin(t)
 
     # define dummy state and reference values (since we aren't simulating yet)
