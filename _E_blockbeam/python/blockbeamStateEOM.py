@@ -94,19 +94,19 @@ import blockbeamParam as P
 params = [(g, P.g), (ell, P.ell)]
 
 # substituting parameters into the equations of motion
-zdd_eom = zdd_eom.subs(params)
-thetadd_eom = thetadd_eom.subs(params)
-print("after subsituting parameters")
-display(Math(vlatex(zdd_eom)))
-display(Math(vlatex(thetadd_eom)))
+# zdd_eom = zdd_eom.subs(params)
+# thetadd_eom = thetadd_eom.subs(params)
+# print("after subsituting parameters")
+# display(Math(vlatex(zdd_eom)))
+# display(Math(vlatex(thetadd_eom)))
 
 # now defining the state variables that will be passed into f(x,u) 
-state = [z, zd, theta, thetad]
-ctrl_input = [F]
+state = sp.Matrix([z, theta, zd, thetad])
+ctrl_input = sp.Matrix([F])
 
 # defining the function that will be called to get the derivatives of the states
-state_dot = [zd, zdd_eom, thetad, thetadd_eom]
-# display(Math(vlatex(Matrix(state_dot))))
+state_dot = sp.Matrix([zd, thetad, zdd_eom, thetadd_eom])
+display(Math(vlatex(Matrix(state_dot))))
 
 
 #%%
