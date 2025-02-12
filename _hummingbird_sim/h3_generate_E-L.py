@@ -6,30 +6,48 @@ from sympy import sin, cos # import the sine and cosine functions
 # for potential energy (gravity)
 # TODO define symbols needed for the RHS of the equations of motion (g, beta, d, f_l, f_r, ell_T, km)
 
-
+g, beta, d, f_l, f_r, ell_T, km = sp.symbols('g beta d f_l f_r ell_T km')
 
 # TODO calculate the kinetic energy using the definition with the mass matrix "M" 
 # and "q_dot"
-K = 
-
+K = .5 * q_dot.T @ M @ q_dot
+print(K)
 # then make sure to grab just the scalar part of the result
 K = K[0,0]
 
 # TODO now calculate the potential energy "P" and make sure it is also a scalar
-P = 
 
-
+P_0 = 0
+P = m1*g*ell_1*sin(theta) + m2*g*ell_2*sin(theta) + m3*g*ell_3z + P_0
 
 #%%
 # TODO now calculate and define tau, C, and dP/dq for the hummingbird based on the definitions in the lab manual
-tau = 
+tau = sp.Matrix([[d*(f_l - f_r)], [ell_T*(f_l + f_r)*cos(theta)], [(ell_T*(f_l + f_r)*cos(theta)*(sin(phi)))-(d*(f_l - f_r))*sin(theta)]])
 
-C = 
+Mdot = sp.simplify(M.diff(t))
+C = Mdot@q_dot - .5*(sp.Matrix([[q_dot.T @ sp.diff(M, q[0])],[q_dot.T @ sp.diff(M, q[1])],[q_dot.T @ sp.diff(M, q[2])]])@q_dot)
 
-dP_dq = 
+dP_dq = sp.diff(P, q)
 
 #%% TODO run this code to verify that your calculations match the lab manual
-display(Math(vlatex(M)))
+# simplify all terms and display
+Mdot = sp.trigsimp(Mdot)
+Mdot = sp.simplify(Mdot)
+Mdot = sp.expand_trig(Mdot)
+
+C = sp.trigsimp(C)
+C = sp.simplify(C)
+C = sp.expand_trig(C)
+
+dP_dq = sp.trigsimp(dP_dq)
+dP_dq = sp.simplify(dP_dq)
+dP_dq = sp.expand_trig(dP_dq)
+
+tau = sp.trigsimp(tau)
+tau = sp.simplify(tau)
+tau = sp.expand_trig(tau)
+
+display(Math(vlatex(Mdot)))
 display(Math(vlatex(C)))
 display(Math(vlatex(dP_dq)))
 display(Math(vlatex(tau)))

@@ -4,7 +4,8 @@ from hummingbirdDynamics import HummingbirdDynamics as dynamics
 import hummingbirdParam as P
 import pickle as pkl
 
-data = pkl.load(open("./test_matrices.pkl", "rb"))
+
+data = pkl.load(open("./_hummingbird_sim/test_matrices.pkl", "rb"))
 
 # states are defined in the following order: [phi, theta, psi, phi_dot, theta_dot, psi_dot]
 states = [np.array([0, 0, 0, 0, 0, 0]).reshape(6, 1),
