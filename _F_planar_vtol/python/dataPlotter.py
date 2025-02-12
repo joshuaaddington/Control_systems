@@ -33,7 +33,7 @@ class dataPlotter:
         '''
             Add to the time and data histories, and update the plots.
             Full state order is assumed to be [z, h, theta, z_dot, h_dot, theta_dot]
-            motor_thrusts is assumed to be [f_left, f_right]
+            motor_thrusts is assumed to be [f_right, f_left]
         '''
         # update the time history of all plot variables
         self.time_history.append(t)  # time
@@ -43,7 +43,7 @@ class dataPlotter:
         self.h_history.append(states.item(1))  # position
         self.theta_history.append(np.degrees(states.item(2)))  # VTOL angle (converted to degrees)
         force = motor_thrusts[0][0]+motor_thrusts[1][0]
-        torque = P.d * (motor_thrusts[0][0] - motor_thrusts[1][0])
+        torque = P.d * (motor_thrusts[1][0] - motor_thrusts[0][0])
         self.Force_history.append(force)  # force
         self.Torque_history.append(torque)  # torque
 
