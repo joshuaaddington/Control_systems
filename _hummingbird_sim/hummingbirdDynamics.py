@@ -82,6 +82,8 @@ class HummingbirdDynamics:
         C = self.C(state, self.param_vals)
         dP_dq = self.dP_dq(state, self.param_vals)
         B = self.B
+        f_l = self.tau[0][0]
+        f_r = self.tau[1][0]
 
         u = np.array([f_l, f_r])
         tau = self.tau(state, u, self.param_vals)

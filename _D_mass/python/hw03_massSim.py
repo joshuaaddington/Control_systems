@@ -3,10 +3,10 @@ import massParam as P
 from signalGenerator import signalGenerator
 from massAnimation import massAnimation
 from dataPlotter import dataPlotter
-from MassDynamics import MassDynamics
+from massDynamics import massDynamics
 
 # instantiate mass, controller, and reference classes
-mass = MassDynamics()
+mass = massDynamics()
 force = signalGenerator(amplitude=10.0, frequency=1)
 
 # instantiate the simulation plots and animation
