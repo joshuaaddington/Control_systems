@@ -42,10 +42,9 @@ class dataPlotter:
         self.href_history.append(h_ref)  # reference position
         self.h_history.append(states.item(1))  # position
         self.theta_history.append(np.degrees(states.item(2)))  # VTOL angle (converted to degrees)
-        force = motor_thrusts[0][0]+motor_thrusts[1][0]
-        torque = P.d * (motor_thrusts[1][0] - motor_thrusts[0][0])
-        self.Force_history.append(force)  # force
-        self.Torque_history.append(torque)  # torque
+        F_tau = P.unmixing @ motor_thrusts
+        self.Force_history.append(F_tau[0,0])  # force
+        self.Torque_history.append(F_tau[1,0])  # torque
 
         # update the plots with associated histories
         self.handle[0].update(self.time_history, [self.z_history, self.zref_history])
