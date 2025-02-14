@@ -1,4 +1,4 @@
-import numpy as np 
+import numpy as np
 import hummingbirdParam as P
 
 # can use the following if you saved numpy versions of your SymPy functions
@@ -42,14 +42,13 @@ class HummingbirdDynamics:
         self.beta = 0.001 # friction coefficient from lab manual
 
         # store the parameters in a list for easy access
-        self.param_vals = [self.m1, self.m2, self.m3, \
-                            self.J1x, self.J1y, self.J1z, \
-                            self.J2x, self.J2y, self.J2z, \
-                            self.J3x, self.J3y, self.J3z, \
-                            self.ell1, self.ell2, \
-                            self.ell3x, self.ell3y, self.ell3z, \
-                            self.ellT, self.d]
-        
+        self.param_vals = [self.m1, self.m2, self.m3,
+                           self.J1x, self.J1y, self.J1z,
+                           self.J2x, self.J2y, self.J2z,
+                           self.J3x, self.J3y, self.J3z,
+                           self.ell1, self.ell2, self.ell3x,
+                           self.ell3y, self.ell3z, self.ellT, self.d]
+
         # if you used the 'h3_generate_E-L.py" file to generate the functions,
         # and you saved them using dill, you can load them here
         #   self.M_func = dill.load(open("hb_M_func.pkl", "rb"))
@@ -57,9 +56,8 @@ class HummingbirdDynamics:
         #   self.dP_dq_func = dill.load(open("hb_dP_dq_func.pkl", "rb"))
         #   self.tau_func = dill.load(open("hb_tau_func.pkl", "rb"))
         # Once loaded, youc an also use them in the self.M, self.C, self.dP_dq, and self.tau function
-        # definitions below. 
+        # definitions below.
 
-        
         self.B = #TODO define the friction-based matrix of coefficients
 
 
@@ -76,27 +74,24 @@ class HummingbirdDynamics:
         phidot = state[3][0]
         thetadot = state[4][0]
         psidot = state[5][0]
-        f_l = u[0][0]
-        f_r = u[1][0]
 
-        # TODO fill out the equations for each of the following in their 
-        # definitions below. 
+        # TODO fill out the equations for each of the following in their
+        # definitions below.
         M = self.M(state)
         C = self.C(state)
         dP_dq = self.dP_dq(state)
-
-        u = np.array([[f_l], [f_r]])
         tau = self.tau(state, u)
 
-        # TODO write an expression for qddot from the lab manual equations, 
-        # remember that it will be in terms of M, C, dP_dq, -Bqdot, and tau 
+        # TODO write an expression for qddot from the lab manual equations,
+        # remember that it will be in terms of M, C, dP_dq, -Bqdot, and tau
         # (but all of them will be numerical values, not functions)
-        qddot = 
-        
+        qddot =
+
+        # define the second derivatives from qddot
         phiddot = qddot[0][0]
         thetaddot = qddot[1][0]
         psiddot = qddot[2][0]
-        
+
         # build xdot and return it
         xdot = np.array([[phidot],
                          [thetadot],
@@ -109,9 +104,9 @@ class HummingbirdDynamics:
     def h(self):
         # TODO Fill in this function using self.state
         # return y = h(x)
-        phi = 
-        theta = 
-        psi = 
+        phi =
+        theta =
+        psi =
         y = np.array([[phi], [theta], [psi]])
         return y
 
@@ -128,15 +123,14 @@ class HummingbirdDynamics:
         #extract any necessary variables from the state and use them
 
         # Fill out M22, M23, and M33
-        M22 = 
-        M23 = 
-        M33 = 
+        M22 =
+        M23 =
+        M33 =
 
         # Return the M matrix
         return np.array([[, , ],
-                      [, , ],
-                      [, , ]
-                      ])
+                         [, , ],
+                         [, , ]])
 
     def C(self, state: np.ndarray, param_vals: list):
         # TODO Fill in this function
@@ -144,20 +138,18 @@ class HummingbirdDynamics:
 
         # Return the C matrix
         return np.array([[],
-                [],
-                [],
-                ])
-        
+                         [],
+                         []])
+
     def dP_dq(self, state: np.ndarray, param_vals: list):
         # TODO Fill in this function
         #extact any necessary variables from the state
 
         # Return the partialP array
         return np.array([[],
-                        [],
-                        [],
-                        ])
-    
+                         [],
+                         []])
+
     def tau(self, state: np.ndarray, u: np.ndarray, param_vals: list):
         """
         Returns the tau matrix as defined in the hummingbird manual.
@@ -171,7 +163,7 @@ class HummingbirdDynamics:
             and right propellers.
         param_vals : list
             A list of the physical parameters of the hummingbird that can be used in SymPy
-            generated functions if needed. 
+            generated functions if needed.
 
         """
         # TODO Fill in this function
@@ -179,9 +171,9 @@ class HummingbirdDynamics:
 
         # Return the tau matrix
         return np.array([[],
-                        [],
-                        []])
-    
+                         [],
+                         []])
+
 
 def saturate(u: np.ndarray, limit: float):
     for i in range(0, u.shape[0]):
