@@ -12,11 +12,14 @@ B = B_lin
 s = symbols('s')
 
 # Define Output Matrices
-C = sp.Matrix([[1, 1, 0, 0]])
-D = sp.Matrix([[0]])
+C = sp.Matrix([[1, 0, 0, 0],[0, 1, 0, 0]])
+D = sp.Matrix([[0],[0]])
 
 # Define Transfer Function
 H = C*(s* sp.eye(4) - A).inv()@B + D
+Zovertheta = H[0]/H[1]
 print("Transfer Function H = ")
 display(Math(vlatex(H)))
+print("Transfer Function Z(s)/ Theta(s) = ")
+display(Math(vlatex(Zovertheta)))
 #%%
