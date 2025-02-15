@@ -9,7 +9,6 @@ from sympy import sin, cos, diff, Matrix, diag, symbols, Function, pretty_print,
 
 #%%
 display(Math(vlatex(state_dot)))
-# display(Math(vlatex(state)))
 
 # Linearize the system
 Fe = sp.Matrix([[0]])

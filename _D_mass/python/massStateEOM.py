@@ -24,7 +24,7 @@ v = p.diff(t)
 Ke = 0.5*m1*v.T @ v
 Ke = Ke[0,0]
 
-Pe = .5*m1*k*z**2
+Pe = .5*k*z**2
 
 L = sp.simplify(Ke - Pe)
 
@@ -87,7 +87,7 @@ ctrl_input = sp.Matrix([[F]])
 # defining the function that will be called to get the derivatives of the states
 state_dot = sp.Matrix([[zd], [zdd_eom]])
 
-# display(Math(vlatex(state_dot)))
+display(Math(vlatex(state_dot)))
 
 #%%
 import numpy as np
