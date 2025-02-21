@@ -1,9 +1,5 @@
-import numpy as np
+import numpy as np 
 import hummingbirdParam as P
-
-# can use the following if you saved numpy versions of your SymPy functions
-import dill
-dill.settings['recurse'] = True
 
 
 class HummingbirdDynamics:
@@ -39,65 +35,49 @@ class HummingbirdDynamics:
         self.J3y = P.J3y * (1. + alpha * (2. * np.random.rand() - 1.))
         self.J3z = P.J3z * (1. + alpha * (2. * np.random.rand() - 1.))
         self.km = P.km * (1. + alpha * (2. * np.random.rand() - 1.))
-        self.beta = 0.001 # friction coefficient from lab manual
-
-        # store the parameters in a list for easy access
-        self.param_vals = [self.m1, self.m2, self.m3,
-                           self.J1x, self.J1y, self.J1z,
-                           self.J2x, self.J2y, self.J2z,
-                           self.J3x, self.J3y, self.J3z,
-                           self.ell1, self.ell2, self.ell3x,
-                           self.ell3y, self.ell3z, self.ellT, self.d]
-
-        # if you used the 'h3_generate_E-L.py" file to generate the functions,
-        # and you saved them using dill, you can load them here
-        self.M_func = dill.load(open("./_hummingbird_sim/hb_M_func.pkl", "rb"))
-        self.C_func = dill.load(open("./_hummingbird_sim/hb_C_func.pkl", "rb"))
-        self.dP_dq_func = dill.load(open("./_hummingbird_sim/hb_dP_dq_func.pkl", "rb"))
-        self.tau_func = dill.load(open("./_hummingbird_sim/hb_tau_func.pkl", "rb"))
-        # Once loaded, youc an also use them in the self.M, self.C, self.dP_dq, and self.tau function
-        # definitions below. 
-
-        
-        self.B = self.beta * np.eye(3)#TODO define the friction-based matrix of coefficients
-
-
-    def update(self, u: np.ndarray):
+ 
+    def update(self, u):
         # This is the external method that takes the input u at time
         # t and returns the output y at time t.
-        # later, we'll add a function to saturate the input forces
+        # saturate the input force
+        u = saturate(u, P.torque_max)
         self.rk4_step(u)  # propagate the state by one time sample
         y = self.h()  # return the corresponding output
         return y
 
-    def f(self, state: np.ndarray, u: np.ndarray):
+    def f(self, state, pwm):
         # Return xdot = f(x,u)
+        pwm_left = pwm[0][0]
+        pwm_right = pwm[1][0]
+
+        # Calculating the terms in the equations of motion.
+        M = self._M(state)  # mass matrix
+        C = self._C(state)  # C matrix 
+        partialP = self._partialP(state)  # gravity-based terms
+        B = self._B()   # friction-based terms
+
+        # calculate the total force, and total torque, 
+        # from the left and right PWM commands
+        force = self.km * (pwm_left + pwm_right)
+        torque = self.d * self.km * (pwm_left - pwm_right)
+        
+        # calculate the generalized force vector "tau"
+        tau = self._tau(state, force, torque)
+
+        # calculate the second derivative of q
+        qddot = np.linalg.inv(M) @ (-C - partialP + tau - B @ state[3:6])
+
+        # pull out the first derivative (or velocity-based) terms from the state
         phidot = state[3][0]
         thetadot = state[4][0]
         psidot = state[5][0]
 
-        # TODO fill out the equations for each of the following in their 
-        # definitions below. 
-        M = self.M(state, self.param_vals)
-        C = self.C(state, self.param_vals)
-        dP_dq = self.dP_dq(state, self.param_vals)
-        B = self.B
-        f_l = self.tau[0][0]
-        f_r = self.tau[1][0]
-
-        u = np.array([f_l, f_r])
-        tau = self.tau(state, u, self.param_vals)
-
-        # TODO write an expression for qddot from the lab manual equations,
-        # remember that it will be in terms of M, C, dP_dq, -Bqdot, and tau
-        # (but all of them will be numerical values, not functions)
-        qddot = np.linalg.inv(M) @ (tau - C - dP_dq - B@state[3:6])
-
+        # define the second derivatives from qddot
         phiddot = qddot[0][0]
         thetaddot = qddot[1][0]
         psiddot = qddot[2][0]
 
-        # build xdot and return it
+        # build xdot and return
         xdot = np.array([[phidot],
                          [thetadot],
                          [psidot],
@@ -106,8 +86,101 @@ class HummingbirdDynamics:
                          [psiddot]])
         return xdot
 
+    def _M(self, state):
+
+        # define the variables we need from the state. 
+        phi = state[0][0]
+        theta = state[1][0]
+
+        # calculate each term of the mass matrix and return the result
+        M22 = self.m1 * self.ell1**2 + self.m2 * self.ell2**2 \
+            + self.J2y + self.J1y * np.cos(phi)**2 \
+            + self.J1z * np.sin(phi)**2
+        M23 = (self.J1y - self.J1z) \
+            * np.sin(phi) * np.cos(phi) * np.cos(theta)
+        M33 = (self.m1 * self.ell1**2 + self.m2 * P.ell2**2
+               + self.J2z + self.J1y * np.sin(phi)**2
+               + self.J1z * np.cos(phi)**2) * np.cos(theta)**2 \
+            + (self.J1x + self.J2x) * np.sin(theta)**2 \
+            + self.m3 * (self.ell3x**2+self.ell3y**2) \
+            + self.J3z
+        
+        return np.array([[self.J1x, 0.0, -self.J1x * np.sin(theta)],
+                         [0.0, M22, M23],
+                         [-self.J1x * np.sin(theta), M23, M33]
+                         ])
+
+    def _C(self, state):
+        # pull out the necessary variables from the state
+        phi = state[0][0]
+        theta = state[1][0]
+        phidot = state[3][0]
+        thetadot = state[4][0]
+        psidot = state[5][0]
+
+        C = np.array([[
+                (self.J1y-self.J1z) * np.sin(phi)
+                * np.cos(phi) * (thetadot**2 - np.cos(theta)**2 * psidot**2)
+                + ((self.J1y - self.J1z)
+                    * (np.cos(phi)**2 - np.sin(phi)**2) - self.J1x)
+                * np.cos(theta) * thetadot * psidot],
+                [2 * (self.J1z - self.J1y) * np.sin(phi) * np.cos(phi)
+                * phidot * thetadot + ((self.J1y - self.J1z)
+                                    * (np.cos(phi)**2 - np.sin(phi)**2) + self.J1x)
+                * np.cos(theta) * phidot * psidot
+                - (self.J1x + self.J2x - self.m1 * self.ell1**2
+                - self.m2 * self.ell2**2 - self.J2z
+                - self.J1y * np.sin(phi)**2
+                - self.J1z * np.cos(phi)**2)
+                * np.sin(theta) * np.cos(theta) * psidot**2],
+                [thetadot**2 * (self.J1z - self.J1y)
+                * np.sin(phi) * np.cos(phi) * np.sin(theta)
+                + ((self.J1y - self.J1z) * (np.cos(phi)**2 - np.sin(phi)**2)
+                - self.J1x) * np.cos(theta) * phidot * thetadot
+                + (self.J1z - self.J1y) * np.sin(phi) * np.cos(phi)
+                * np.sin(theta) * thetadot**2
+                + 2 * (self.J1y - self.J1z) *
+                np.sin(phi) * np.cos(phi)
+                * phidot * psidot
+                + 2 * (-self.m1 * self.ell1**2 - self.m2 * self.ell2**2
+                        - self.J2z + self.J1x + self.J2x
+                        + self.J1y * np.sin(phi)**2
+                        + self.J1z * np.sin(phi)**2)
+                * np.sin(theta) * np.cos(theta) * thetadot * psidot],
+            ])
+
+        return C 
+
+    def _partialP(self, state):
+        # extract any necessary variables from the state
+        theta = state[1][0]
+
+        dP_dq = np.array([
+                    [0],
+                    [(self.m1 * self.ell1 + self.m2 * self.ell2)* P.g * np.cos(theta)],
+                    [0],
+                ])
+
+        return dP_dq 
+
+    def _tau(self, state, force, torque):
+        # extract any necessary variables from the state
+        phi = state[0][0]
+        theta = state[1][0]
+
+        tau = np.array([
+                [torque],
+                [self.ellT * force * np.cos(phi)],
+                [self.ellT * force * np.cos(theta) * np.sin(phi) - torque * np.sin(theta)]
+                ])
+        return tau
+
+    def _B(self):
+        # This needs no variables from the state
+        return 0.001 * np.eye(3)
+
+
     def h(self):
-        # TODO Fill in this function using self.state
         # return y = h(x)
         phi = self.state[0][0]
         theta = self.state[1][0]
@@ -115,65 +188,16 @@ class HummingbirdDynamics:
         y = np.array([[phi], [theta], [psi]])
         return y
 
-    def rk4_step(self, u: np.ndarray):
+    def rk4_step(self, u):
         # Integrate ODE using Runge-Kutta RK4 algorithm
         F1 = self.f(self.state, u)
         F2 = self.f(self.state + P.Ts / 2 * F1, u)
         F3 = self.f(self.state + P.Ts / 2 * F2, u)
         F4 = self.f(self.state + P.Ts * F3, u)
-        self.state = self.state + P.Ts / 6 * (F1 + 2*F2 + 2*F3 + F4)
+        self.state += P.Ts / 6 * (F1 + 2 * F2 + 2 * F3 + F4)
 
-    def M(self, state: np.ndarray, param_vals: list):
-        # TODO Fill in this function
-        #extract any necessary variables from the state and use them
 
-        # Fill out M22, M23, and M33
-        M_matrix = self.M_func(state, param_vals)
-
-        # Return the M matrix
-        return M_matrix
-
-    def C(self, state: np.ndarray, param_vals: list):
-        # TODO Fill in this function
-        #extract any necessary variables from the state and use them
-        C_matrix = self.C_func(state, param_vals)
-
-        # Return the C matrix
-        return C_matrix
-        
-    def dP_dq(self, state: np.ndarray, param_vals: list):
-        # TODO Fill in this function
-        #extact any necessary variables from the state
-        dP_dq_matrix = self.dP_dq_func(state, param_vals)
-
-        # Return the partialP array
-        return dP_dq_matrix
-    
-    def tau(self, state: np.ndarray, u: np.ndarray, param_vals: list):
-        """
-        Returns the tau matrix as defined in the hummingbird manual.
-
-        Parameters
-        ----------
-        state : numpy.ndarray
-            The state of the hummingbird. Contains phi, theta, psi, and their derivatives.
-        u : numpy.ndarray
-            The input to the hummingbird. Contains f_l and f_r, the forces from the left
-            and right propellers.
-        param_vals : list
-            A list of the physical parameters of the hummingbird that can be used in SymPy
-            generated functions if needed.
-
-        """
-        # TODO Fill in this function
-        # extract any necessary variables from the state
-        tau_matrix = self.tau_func(state, u, param_vals)
-
-        # Return the tau matrix
-        return tau_matrix
-    
-
-def saturate(u: np.ndarray, limit: float):
+def saturate(u, limit):
     for i in range(0, u.shape[0]):
         if abs(u[i][0]) > limit:
             u[i][0] = limit * np.sign(u[i][0])

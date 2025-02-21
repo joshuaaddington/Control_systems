@@ -8,7 +8,7 @@ phidot0 = 0.0              # roll rate in rads/sec
 thetadot0 = 0.0         # pitch rate in rads/sec
 psidot0 = 0.0              # yaw rate in rads/sec
 # Physical parameters of the hummingbird known to the controller
-g = 9.81  # the gravity constant is 9.81 m/s^2
+g =  9.81 # the gravity constant is 9.81 m/s^2
 ell1 = .247
 ell2 = -.039
 ell3x = -.007
