@@ -1,5 +1,5 @@
 #%%
-from hw6_VTOL_linearization import *
+from hw4_VTOL_linearization import *
 from sympy import eye, zeros, simplify
 
 # the order for rows in C is just because I had defined my states as [z, h, theta, z_dot, h_dot, theta_dot], but I want
