@@ -7,8 +7,8 @@ class ctrlPD:
     def __init__(self):
         #  tuning parameters
         #tr = 0.8 # part (a)
-        tr = 0.37 # tuned for faster rise time before saturation.
-        zeta = 0.707
+        tr = 2 # tuned for faster rise time before saturation.
+        zeta = 0.7
 
         # desired natural frequency
         wn = 0.5 * np.pi / (tr * np.sqrt(1 - zeta**2))

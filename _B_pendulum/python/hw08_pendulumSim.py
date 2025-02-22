@@ -18,6 +18,8 @@ animation = pendulumAnimation()
 
 t = P.t_start  # time starts at t_start
 y = pendulum.h()  # output of system at start of simulation
+# add a random disturbance to the system
+# disturbance = signalGenerator(amplitude=10, frequency=0.1)
 
 # for part e), we can uncomment below
 #pendulum.state[1,0] = 10.0*np.pi/180.0
@@ -30,6 +32,7 @@ while t < P.t_end:  # main simulation loop
 
     while t < t_next_plot:
         r = reference.square(t)  # reference input
+        # d = disturbance.sawtooth(t)
         x = pendulum.state  # use state instead of output
         u = controller.update(r, x)  # update controller
         y = pendulum.update(u)  # propagate system
