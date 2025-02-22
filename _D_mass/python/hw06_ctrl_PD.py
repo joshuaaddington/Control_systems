@@ -1,5 +1,6 @@
 import numpy as np
-import armParam as P
+import massParam as P
+from hw06_mass_Kp_Kd import *
 
 
 class ctrlPD:
@@ -15,38 +16,29 @@ class ctrlPD:
         alpha0 = wn**2
 
         # compute PD gains
-        self.kp = alpha0*(P.m * P.ell**2) / 3.0
-        self.kd = (P.m * P.ell**2) \
-                    / 3.0 * (alpha1 - 3.0 * P.b / (P.m * P.ell**2))
+        self.kd = P.m * (alpha1 - (P.b/P.m))
+        self.kp = P.m * (alpha0 - (P.k/P.m))
         print('kp: ', self.kp)
         print('kd: ', self.kd)
 
-    def update(self, theta_r, state):
-        theta = state[0][0]
-        thetadot = state[1][0]
+    def update(self, x_ref, state):
+        x = state[0][0]
+        x_dot = state[1][0]
 
         # compute feedback linearizing torque tau_fl
-        tau_fl = P.m * P.g * (P.ell / 2.0) * np.cos(theta)
+        F_fl = 0
 
         # compute the linearized torque using PD
-        tau_tilde = self.kp * (theta_r - theta) \
-                    - self.kd * thetadot
+        F_tilde = self.kp * (x_ref - x) \
+                    - self.kd * x_dot
         
         # compute total torque
-        tau = tau_fl + tau_tilde
-        tau = saturate(tau, P.tau_max)
-        return tau
+        F = F_fl + F_tilde
+        F = saturate(F, P.F_max)
+        return F
 
 
 def saturate(u, limit):
     if abs(u) > limit:
         u = limit * np.sign(u)
     return u
-
-
-
-
-
-
-
-

@@ -17,6 +17,6 @@ D = sp.Matrix([[0]])
 
 # Define Transfer Function
 H = C*(s* sp.eye(2) - A).inv()@B + D
-print("Transfer Function H(s)/ F(s) = ")
-display(Math(vlatex(H)))
+# print("Transfer Function H(s)/ F(s) = ")
+# display(Math(vlatex(H)))
 # %%
