@@ -1,10 +1,12 @@
-# use this file to test your vectors and matrices from the hummingbirdDynamics.py file
+# run this file to test your vectors and matrices from the hummingbirdDynamics.py file
 import numpy as np
 from hummingbirdDynamics import HummingbirdDynamics as dynamics
 import hummingbirdParam as P
 import pickle as pkl
 
+
 data = pkl.load(open("./test_matrices.pkl", "rb"))
+precision = 6
 
 # states are defined in the following order: [phi, theta, psi, phi_dot, theta_dot, psi_dot]
 states = [np.array([0, 0, 0, 0, 0, 0]).reshape(6, 1),
@@ -17,7 +19,19 @@ inputs = [np.array([[0], [0]]),
           np.array([[0.05], [-0.05]])]
 
 hb_dynamics = dynamics(alpha=0.0)
-np.set_printoptions(formatter={'float': lambda x: f"{x:14.3g}"})
+
+def test_matrix(name, actual, expected):
+    error = actual - expected
+    correct_indices = np.abs(error) < 1e-14
+    if correct_indices.all():
+        print(f"{name:>10}: PASS")
+    else:
+        incorrect_indices = np.argwhere(~correct_indices)
+        print(f"{name:>10}: FAIL")
+        for r,c in incorrect_indices:
+            print(f'{name:>20}[{r},{c}]: ', end='')
+            print(f'yours = {actual[r,c]:<{precision+9}.{precision}g} ', end='')
+            print(f'expected = {expected[r,c]:.{precision}g}')
 
 for i in range(len(states)):
     M_test = hb_dynamics.M(states[i], hb_dynamics.param_vals)
@@ -25,17 +39,9 @@ for i in range(len(states)):
     dP_dq_test = hb_dynamics.dP_dq(states[i], hb_dynamics.param_vals)
     tau_test = hb_dynamics.tau(states[i], inputs[i], hb_dynamics.param_vals)
 
-    print("Test case index", i)
-    print("Your 'M' matrix is:\n", M_test)    
-    print("Key 'M' matrix is:\n", data['M'][i], "\n\n")    
-
-    print("Your 'C' matrix is:\n", C_test)
-    print("Key 'C' matrix is:\n", data['C'][i], "\n\n")    
-
-    print("Your 'dP_dq' matrix is:\n", dP_dq_test)
-    print("Key 'dP_dq' matrix is:\n", data['dP_dq'][i], "\n\n")    
-
-    print("Your 'tau' matrix is:\n", tau_test)
-    print("Key 'tau' matrix is:\n", data['tau'][i], "\n\n")    
-
-    input("\nPress Enter to continue...")
+    print(f"test {i+1}:")
+    test_matrix("M", M_test, data['M'][i])
+    test_matrix("C", C_test, data['C'][i])
+    test_matrix("dP_dq", dP_dq_test, data['dP_dq'][i])
+    test_matrix("tau", tau_test, data['tau'][i])
+    print()
