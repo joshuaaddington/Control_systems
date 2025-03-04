@@ -5,22 +5,22 @@ import sympy as sp
 from numpy import pi, sqrt
 
 # Rearrange Transfer Function to isolate s**2 term
-Theta_over_Tau = transfer_func[2, 1]
+Z_over_Tau = transfer_func[1, 1]/(transfer_func[2, 1])
 
 params = [(mr, P.mr), (mc, P.mc), (d, P.d), (g, P.g), (Jc, P.Jc), (mu, P.mu)]
-Theta_over_Tau = Theta_over_Tau.subs(params)
+Z_over_Tau = Z_over_Tau.subs(params)
 
-poles = sp.solve(Theta_over_Tau.as_numer_denom()[1], s)
+poles = sp.solve(Z_over_Tau.as_numer_denom()[1], s)
 
 print("Poles of the system are:")
 display(Math(vlatex(poles)))
 # %%
 # Isolate squared term in the denominator (this is with everything substituted already)
-Z_over_F_num = Theta_over_Tau.as_numer_denom()[0]
-Z_over_F_den = Theta_over_Tau.as_numer_denom()[1]
+Z_over_F_num = Z_over_Tau.as_numer_denom()[0]
+Z_over_F_den = Z_over_Tau.as_numer_denom()[1]
 squared_coeff = Z_over_F_den.coeff(s, 2)
-Z_over_F_num = Z_over_F_num/squared_coeff
-Z_over_F_den = Z_over_F_den/squared_coeff
+# Z_over_F_num = Z_over_F_num/squared_coeff
+# Z_over_F_den = Z_over_F_den/squared_coeff
 
 a0 = Z_over_F_den.coeff(s, 0)
 a1 = Z_over_F_den.coeff(s, 1)
@@ -51,7 +51,7 @@ display(Math(vlatex(Kd_from_root)))
 
 # %%
 # Calculate Kp and Kd based on desired rise time and damping ratio
-tr = .8 # tuned for faster rise time before saturation.
+tr = 8 # tuned for faster rise time before saturation.
 zeta = 0.707
 
 # desired natural frequency

@@ -11,7 +11,6 @@ q_ddot = q_dot.diff(t)
 B = beta*sp.eye(3)  # damping matrix
 LHS = M*q_ddot + C + dP_dq
 RHS = tau - B@q_dot
-FULL_EOM = LHS - RHS
 
 #%%[markdown]
 # Longitudinal Dynamics are derived in this section: 
@@ -61,11 +60,12 @@ FULL_SUBBED_LONG = FULL_SUBBED_LONG.subs(g, 9.810)
 #%%
 # step 4 - find the linearized equation of motion for theta_ddot
 display('Linearized Longitudinal Dynamics (step 4):')
-display(Math(vlatex(sp.Eq(theta.diff(t).diff(t), sp.solve(FULL_SUBBED_LONG, q_ddot[1])[0]))))
-
+Thetadd_EOM = sp.simplify(sp.solve(FULL_SUBBED_LONG, q_ddot[1])[0])
+Thetadd_EOM = Thetadd_EOM.subs([(J1x, P.J1x), (J1y, P.J1y), (J1z, P.J1z), (J2x, P.J2x), (J2y, P.J2y), (J2z, P.J2z), (J3x, P.J3x), (J3y, P.J3y), (J3z, P.J3z), (ell_1, P.ell1), (ell_2, P.ell2), (ell_T, P.ellT), (m1, P.m1), (m2, P.m2), (m3, P.m3), (theta, 0)])
+# display(Math(vlatex(Thetadd_EOM)))
 
 #%% [markdown]
-# Lateral Dynamics are derived in this section:
+# **Lateral Dynamics are derived in this section:**
 
 #%%
 # step 1 - substitute zero in for all the suggested variables
@@ -81,16 +81,12 @@ LHS_zeroes_subbed_lat = LHS_lat.subs(lat_subs)
 RHS_zeroes_subbed_lat = RHS_lat.subs(lat_subs)
 FULL_zeroes_subbed_lat = LHS_zeroes_subbed_lat - RHS_zeroes_subbed_lat
 
-display('Lateral Dynamics (step 1):')
-display(Math(vlatex(sp.simplify(FULL_zeroes_subbed_lat))))
+# display('Lateral Dynamics (step 1):')
+# display(Math(vlatex(sp.simplify(FULL_zeroes_subbed_lat))))
 
 #%%
 # step 2 - find the equilibrium force F_e
 F_e_lat = sp.symbols('F_e_lat')
-# F_e_lat = (m1*ell_1 + m2*ell_2)*g/ell_T
-# FULL_subbed_lat = FULL_subbed_lat.subs(F, F_e_lat)
-# display('Lateral Dynamics (step 2):')
-# display(Math(vlatex(sp.simplify(FULL_subbed_lat))))
 
 #%%
 # step 3 - find the equilibrium variables Tau_e and phi_e
@@ -113,19 +109,19 @@ x = sp.Matrix([q[0], q[2], q_dot[0], q_dot[2]])
 x_dot = sp.Matrix([q_dot[0], q_dot[2], phidd_eom, psidd_eom])
 u = sp.Matrix([Tau])
 
-A = x_dot.jacobian(x).subs(equilibrium_subs)
-B = x_dot.jacobian(u).subs(equilibrium_subs)
+A = sp.simplify(x_dot.jacobian(x).subs(equilibrium_subs))
+B = sp.simplify(x_dot.jacobian(u).subs(equilibrium_subs))
 
-display('Linearized Lateral Dynamics (step 4):')
-display(Math(vlatex(sp.simplify(A))))
-display(Math(vlatex(sp.simplify(B))))
+# display('Linearized Lateral Dynamics (step 4):')
+# display(Math(vlatex(sp.simplify(A))))
+# display(Math(vlatex(sp.simplify(B))))
 #%%
 # Substitute numerical values for the parameters
-A_num = A.subs([(ell_1, P.ell1), (ell_2, P.ell2), (ell_T, P.ellT), (m1, P.m1), (ell_3x, P.ell3x), (ell_3y, P.ell3y), (ell_3z, P.ell3z), (m2, P.m2), (m3, P.m3), (g, P.g), (J1x, P.J1x), (J1y, P.J1y), (J1z, P.J1z), (J2x, P.J2x), (J2y, P.J2y), (J2z, P.J2z), (J3x, P.J3x), (J3y, P.J3y), (J3z, P.J3z)])
-B_num = B.subs([(ell_1, P.ell1), (ell_2, P.ell2), (ell_T, P.ellT), (m1, P.m1), (ell_3x, P.ell3x), (ell_3y, P.ell3y), (ell_3z, P.ell3z), (m2, P.m2), (m3, P.m3), (g, P.g), (J1x, P.J1x), (J1y, P.J1y), (J1z, P.J1z), (J2x, P.J2x), (J2y, P.J2y), (J2z, P.J2z), (J3x, P.J3x), (J3y, P.J3y), (J3z, P.J3z)])
+A_num = sp.simplify(A.subs([(ell_1, P.ell1), (ell_2, P.ell2), (ell_T, P.ellT), (m1, P.m1), (ell_3x, P.ell3x), (ell_3y, P.ell3y), (ell_3z, P.ell3z), (m2, P.m2), (m3, P.m3), (g, P.g), (J1x, P.J1x), (J1y, P.J1y), (J1z, P.J1z), (J2x, P.J2x), (J2y, P.J2y), (J2z, P.J2z), (J3x, P.J3x), (J3y, P.J3y), (J3z, P.J3z)]))
+B_num = sp.simplify(B.subs([(ell_1, P.ell1), (ell_2, P.ell2), (ell_T, P.ellT), (m1, P.m1), (ell_3x, P.ell3x), (ell_3y, P.ell3y), (ell_3z, P.ell3z), (m2, P.m2), (m3, P.m3), (g, P.g), (J1x, P.J1x), (J1y, P.J1y), (J1z, P.J1z), (J2x, P.J2x), (J2y, P.J2y), (J2z, P.J2z), (J3x, P.J3x), (J3y, P.J3y), (J3z, P.J3z)]))
 
-display('Numerical Linearized Lateral Dynamics (step 4):')
-display(Math(vlatex(sp.simplify(A_num))))
-display(Math(vlatex(sp.simplify(B_num))))
+# display('Numerical Linearized Lateral Dynamics (step 4):')
+# display(Math(vlatex(sp.simplify(A_num))))
+# display(Math(vlatex(sp.simplify(B_num))))
 
 # %%

@@ -20,12 +20,12 @@ theta = dynamicsymbols('theta')
 
 
 #defining generalized coords and derivatives
-q = Matrix([[z], [theta]])
+q = Matrix([[z], [theta]]) # ""Will change per problem"""
 qdot = q.diff(t)
 
 #defining the kinetic energy
-p1 = Matrix([[z+ell/2.0*sin(theta)], [ell/2.0*cos(theta)], [0]])
-p2 = Matrix([[z], [0], [0]])
+p1 = Matrix([[z+ell/2.0*sin(theta)], [ell/2.0*cos(theta)], [0]]) # ""Will change per problem""" This is the position of the center of mass
+p2 = Matrix([[z], [0], [0]]) # ""Will change per problem"""
 
 v1 = diff(p1, t)
 v2 = diff(p2, t)

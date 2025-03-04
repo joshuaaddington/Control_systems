@@ -8,52 +8,40 @@ from sympy import sin, cos # import the sine and cosine functions
 
 g, beta, d, f_l, f_r, ell_T, km = sp.symbols('g beta d f_l f_r ell_T km')
 
-# TODO calculate the kinetic energy using the definition with the mass matrix "M"
+
+# TODO calculate the kinetic energy using the definition with the mass matrix "M" 
 # and "q_dot"
-K = .5 * q_dot.T @ M @ q_dot
-print(K)
+K = 1.0/2.0 * q_dot.T @ M @ q_dot # calculate the kinetic energy
+
 # then make sure to grab just the scalar part of the result
 K = K[0,0]
 
-# TODO now calculate the potential energy "P" and make sure it is also a scalar
 
-P_0 = 0
-P = m1*g*ell_1*sin(theta) + m2*g*ell_2*sin(theta) + m3*g*ell_3z + P_0
+# TODO now calculat the potential energy "P"
+P = m1*g*ell_1*sp.sin(theta) + m2*g*ell_2*sp.sin(theta) + m3*g*ell_3z
+# this method would also work. 
+# g_vec = sp.Matrix([[0], [0], [-g]]) # This would be negative because the z-axis is pointing down
+#                                     # in figure 2-3 of the hummingbird lab manual. 
+# P = m1*g_vec.T@p1_in_w + m2*g_vec.T@p2_in_w + m3*g_vec.T@p3_in_w
+# P = P[0,0]
 
-#%%
 # TODO now calculate and define tau, C, and dP/dq for the hummingbird based on the definitions in the lab manual
-tau = sp.Matrix([[d*(f_l - f_r)], [ell_T*(f_l + f_r)*cos(theta)], [(ell_T*(f_l + f_r)*cos(theta)*(sin(phi)))-(d*(f_l - f_r))*sin(theta)]])
+tau = sp.Matrix([[d*(f_l-f_r)], 
+                 [ell_T*(f_l+f_r)*cos(phi)], 
+                 [ell_T*(f_l+f_r)*cos(theta)*sin(phi)-d*(f_l-f_r)*sin(theta)]])
 
-Mdot = sp.simplify(M.diff(t))
-C = Mdot@q_dot - .5*(sp.Matrix([[q_dot.T @ sp.diff(M, q[0])],[q_dot.T @ sp.diff(M, q[1])],[q_dot.T @ sp.diff(M, q[2])]])@q_dot)
+C = M.diff(t)@q_dot - 0.5*sp.Matrix([[q_dot.T@M.diff(q[0])], [q_dot.T@M.diff(q[1])], [q_dot.T@M.diff(q[2])]])@q_dot
 
-dP_dq = sp.diff(P, q)
+dP_dq = P.diff(q)
 
 #%% TODO run this code to verify that your calculations match the lab manual
-# simplify all terms and display
-Mdot = sp.trigsimp(Mdot)
-Mdot = sp.simplify(Mdot)
-Mdot = sp.expand_trig(Mdot)
-
-C = sp.trigsimp(C)
-C = sp.simplify(C)
-C = sp.expand_trig(C)
-
-dP_dq = sp.trigsimp(dP_dq)
-dP_dq = sp.simplify(dP_dq)
-dP_dq = sp.expand_trig(dP_dq)
-
-tau = sp.trigsimp(tau)
-tau = sp.simplify(tau)
-tau = sp.expand_trig(tau)
-
-display(Math(vlatex(Mdot)))
-display(Math(vlatex(C)))
-display(Math(vlatex(dP_dq)))
-display(Math(vlatex(tau)))
+# display(Math(vlatex(M)))
+# display(Math(vlatex(C)))
+# display(Math(vlatex(dP_dq)))
+# display(Math(vlatex(tau)))
 
 # if yours does not match, you can use some combinations of sp.trigexpand(sp.simiplify()) to help match the lab manual, but this is not required
-# and if you can't easily see the comparison, it may be worth moving on to using the "test_dynamics.py" file to perform numerical comparisons.
+# and if you can't easily see the comparison, it may be worth moving on to using the "test_dynamics.py" file to perform numerical comparisons. 
 
 
 #%%
@@ -68,21 +56,27 @@ C = C.subs(params_sub)
 dP_dq = dP_dq.subs(params_sub)
 tau = tau.subs(params_sub)
 
+# TODO now you can either generate functions to calculate M, C, tau, friction, and dP_dq using lambdify,
+# or you can hand-code the results you have found above into the hummingbirdDynamics.py file.
 
-state = np.array([[phi, theta, psi, q_dot[0], q_dot[1], q_dot[2]]]).T
+state = np.array([phi, 
+        theta, 
+        psi, 
+        q_dot[0], 
+        q_dot[1], 
+        q_dot[2]]).reshape(6,1)
 
-u = np.array([[f_l, f_r]]).T
-
-params = [m1, m2, m3,
-          J1[0,0], J1[1,1], J1[2,2],
-          J2[0,0], J2[1,1], J2[2,2],
-          J3[0,0], J3[1,1], J3[2,2],
-          ell_1, ell_2, ell_3x, ell_3y, ell_3z, ell_T, d]
+params = [m1, m2, m3, \
+          J1[0,0], J1[1,1], J1[2,2], \
+          J2[0,0], J2[1,1], J2[2,2], \
+          J3[0,0], J3[1,1], J3[2,2], \
+          ell_1, ell_2, ell_3x, ell_3y, ell_3z, ell_T, \
+          d]
 
 M_num = sp.lambdify([state, params], np.array(M), modules='numpy')
 C_num = sp.lambdify([state, params], np.array(C), modules='numpy')
 dP_dq_num = sp.lambdify([state, params], np.array(dP_dq), modules='numpy')
-tau_num = sp.lambdify([state, u, params], np.array(tau), modules='numpy')
+tau_num = sp.lambdify([state, [f_l, f_r], params], np.array(tau), modules='numpy')
 
 import dill
 dill.settings['recurse'] = True
