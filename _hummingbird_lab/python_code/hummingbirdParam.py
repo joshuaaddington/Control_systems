@@ -14,10 +14,8 @@ phi_kp = 0.017
 phi_kd = 0.005
 
 theta_ref = 0.0
-theta_kp = 0.17
-# theta_kp = 1.14 original value
-theta_kd = 0.05
-# theta_kd = 0.35 original value
+theta_kp = 0.0
+theta_kd = 0.0
 theta_ki = 0.0
 
 psi_ref = 0.0
