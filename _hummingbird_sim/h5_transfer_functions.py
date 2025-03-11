@@ -7,9 +7,9 @@ from h4_linearize_dyn import *
 # Laplace symbol
 s = sp.symbols('s')
 Thetadd_EOM = Thetadd_EOM.subs(theta, 0)
-Theta_over_F = laplace_transform(Thetadd_EOM, t, s)
-Theta_over_F = sp.simplify(Theta_over_F[0])
-display(Math(vlatex(Theta_over_F)))
+theta_over_F = laplace_transform(Thetadd_EOM, t, s)
+theta_over_F = sp.simplify(theta_over_F[0])
+# display(Math(vlatex(Theta_over_F)))
 # %%
 # Lateral Transfer Functions
 A_lin_phi = A_num[[0, 2], :][:, [0, 2]]
