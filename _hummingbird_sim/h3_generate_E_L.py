@@ -100,3 +100,5 @@ C_val = C_num(x, param_vals)
 dP_dq_val = dP_dq_num(x, param_vals)
 tau_val = tau_num(x, u, param_vals)
 B_val = 0.001*np.eye(3)
+
+# %%

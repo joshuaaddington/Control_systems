@@ -1,3 +1,4 @@
+#%%
 # run this file to test your vectors and matrices from the hummingbirdDynamics.py file
 import numpy as np
 from hummingbirdDynamics import HummingbirdDynamics as dynamics
@@ -5,7 +6,7 @@ import hummingbirdParam as P
 import pickle as pkl
 
 
-data = pkl.load(open("./test_matrices.pkl", "rb"))
+data = pkl.load(open(r"C:\Users\joshu\Documents\BYU\2025_Winter\Controls\Control_systems\Control_systems\_hummingbird_sim\test_matrices.pkl", "rb"))
 precision = 6
 
 # states are defined in the following order: [phi, theta, psi, phi_dot, theta_dot, psi_dot]
@@ -45,3 +46,5 @@ for i in range(len(states)):
     test_matrix("dP_dq", dP_dq_test, data['dP_dq'][i])
     test_matrix("tau", tau_test, data['tau'][i])
     print()
+
+# %%

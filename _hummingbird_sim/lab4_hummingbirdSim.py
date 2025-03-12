@@ -5,7 +5,7 @@ from signalGenerator import SignalGenerator
 from hummingbirdAnimation import HummingbirdAnimation
 from dataPlotter import DataPlotter
 from hummingbirdDynamics import HummingbirdDynamics
-from ctrlEquilibrium import *
+from _hummingbird_sim.ctrlLonPD import *
 
 # instantiate reference input classes
 phi_ref = SignalGenerator(amplitude=1.5, frequency=0.05)
