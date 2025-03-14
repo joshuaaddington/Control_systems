@@ -36,8 +36,8 @@ B = f_of_x_and_u.jacobian(inputs)
 A_lin = simplify(A.subs([(theta.diff(t),0), (theta, 0), (z.diff(t), 0), (F, m1*g/ell*ze + m2*g/2), (z, ze)]))
 B_lin = simplify(B.subs([(theta.diff(t),0), (theta, 0), (z.diff(t), 0), (F, m1*g/ell*ze + m2*g/2), (z, ze)]))
 
-# print("Linearized A Matrix is:")
-# display(Math(vlatex(A_lin)))
+print("Linearized A Matrix is:")
+display(Math(vlatex(A_lin)))
 
-# print("Linearized B Matrix is:")
-# display(Math(vlatex(B_lin)))
+print("Linearized B Matrix is:")
+display(Math(vlatex(B_lin)))

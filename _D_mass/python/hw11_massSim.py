@@ -11,8 +11,8 @@ from ctrlStateFeedback import ctrlStateFeedback
 # instantiate mass, controller, and reference classes
 mass = massDynamics(alpha=0)
 controller = ctrlStateFeedback()
-reference = signalGenerator(amplitude=30*np.pi/180.0,
-                            frequency=0.1)
+reference = signalGenerator(amplitude=60*np.pi/180.0,
+                            frequency=0.04)
 
 # instantiate the simulation plots and animation
 dataPlot = dataPlotter()

@@ -11,7 +11,7 @@ class ctrlPID:
         #       PD Control: Time Design Strategy
         ####################################################
         # tuning parameters
-        tr_z = 1.1  # rise time for outer loop - first part of problem
+        tr_z = 1.2  # rise time for outer loop - first part of problem
         zeta_z = 0.707  # damping ratio for outer loop
         M = 10  # time scale separation between inner and outer loop
         zeta_th  = 0.707  # damping ratio for inner loop

@@ -7,6 +7,15 @@ m1 = 0.35  # Mass of the ball, kg
 m2 = 2  # mass of beam, kg
 length = 0.5  # length of beam, m
 g = 9.81  # gravity at sea level, m/s^2
+ze = length/2.0  # equilibrium position of ball, m
+
+# State Space Equations
+A = np.array([[0, 0, 1, 0],
+              [0, 0, 0, 1],
+              [0, -1*g, 0, 0],
+              [(-3*g*m1)/(length**2*m2 + 3*m1*ze**2), 0, 0, 0]])
+B = np.array([[0], [0], [0], [(3*length)/(length**2*m2 + 3*m1*ze**2)]])
+C = np.array([[1, 0, 0, 0]])  # output matrix
 
 # parameters for animation
 width = 0.05  # width of block
