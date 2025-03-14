@@ -19,10 +19,10 @@ B = state_dot.jacobian(ctrl_input)
 A_linear = A.subs([(zd, 0), (z, Ze[0,0]), (F, Fe[0,0])])
 B_linear = B.subs([(zd, 0), (z, Ze[0,0]), (F, Fe[0,0])])
 
-# print("A_linear = ")
-# display(Math(vlatex(A_linear)))
-# print("B_linear = ")
-# display(Math(vlatex(B_linear)))
+print("A_linear = ")
+display(Math(vlatex(A_linear)))
+print("B_linear = ")
+display(Math(vlatex(B_linear)))
 
 # Feedback linearization
 

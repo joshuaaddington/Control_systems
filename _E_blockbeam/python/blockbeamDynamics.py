@@ -24,7 +24,7 @@ class blockbeamDynamics:
         #################################################
         self.m1 = P.m1 * (1+2*alpha*np.random.rand()-alpha)
         self.m2 = P.m2 * (1+2*alpha*np.random.rand()-alpha)
-        self.length = P.ell * (1+2*alpha*np.random.rand()-alpha)
+        self.length = P.length * (1+2*alpha*np.random.rand()-alpha)
         self.g = P.g
         self.Ts = P.Ts
 
