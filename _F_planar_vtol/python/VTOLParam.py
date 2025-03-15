@@ -30,6 +30,41 @@ t_plot = 0.033  # the plotting and animation is updated at this rate
 
 # saturation limits
 F_max = 10.0  # Max thrust produced by each motor, N
+Tau_max = F_max * d  # Max torque produced by each motor, N*m
+
+A_lon = np.array([
+    [0, 1],
+    [0, 0]
+])
+
+B_lon = np.array([
+    [0],
+    [1 / (mc + 2 * mr)]
+])
+
+C_lon = np.array([[1, 0]])  # output matrix
+
+A_lat = np.array([
+    [0, 0, 1, 0],
+    [0, 0, 0, 1],
+    [0, -g, -mu / (mc + 2*mr), 0],
+    [0, 0, 0, 0]
+])
+
+B_lat = np.array([
+    [0],
+    [0],
+    [0],
+    [1 / (Jc + 2 * d**2 * mr)]
+])
+
+C_lat = np.array([[1, 0, 0, 0]])  # output matrix
+
+# Print matrices to verify
+print("A_lon:\n", A_lon)
+print("B_lon:\n", B_lon)
+print("A_lat:\n", A_lat)
+print("B_lat:\n", B_lat)
 
 # mixing matrix
 unmixing = np.array([[1.0, 1.0], [d, -d]]) # converts fr and fl (RL) to force and torque (FT)

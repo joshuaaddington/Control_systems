@@ -2,7 +2,7 @@ import numpy as np
 import VTOLParam as P
 
 
-class Dynamics:
+class VTOLDynamics:
     def __init__(self, alpha = 0.0):
         # Initial state conditions
         self.state = np.array([
@@ -80,6 +80,7 @@ class Dynamics:
         self.state = self.state + self.Ts / 6 * (F1 + 2*F2 + 2*F3 + F4)
 
 def saturate(u, limit):
+    print("THIS IS U:", u)
     u = u.reshape((u.shape[0], 1))
     for i in range(0, u.shape[0]):
         if abs(u[i][0]) > limit:

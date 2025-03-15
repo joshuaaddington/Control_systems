@@ -7,7 +7,11 @@ m1 = 0.35  # Mass of the ball, kg
 m2 = 2  # mass of beam, kg
 length = 0.5  # length of beam, m
 g = 9.81  # gravity at sea level, m/s^2
+
+# equilibrium force when block is in center of beam
 ze = length/2.0  # equilibrium position of ball, m
+xe = np.array([[ze], [0], [0], [0]])  # equilibrium state
+Fe = m1*g*ze/length + m2*g/2.0
 
 # State Space Equations
 A = np.array([[0, 0, 1, 0],
@@ -34,8 +38,4 @@ Ts = 0.01  # sample time for simulation
 t_plot = 0.033  # the plotting and animation is updated at this rate
 
 # saturation limits
-F_max = 15.0  # Max Force, N
-
-# equilibrium force when block is in center of beam
-ze = length/2.0
-Fe = m1*g*z0/length + m2*g/2.0
+F_max = 150  # Max Force, N
