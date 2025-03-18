@@ -30,6 +30,7 @@ J3y = .0001956
 J3z = .000027
 km = g * (m1 * ell1 + m2 * ell2) / ellT  # need to find this experimentally for hardware
 beta = .001
+F_e = ((m1*ell1 + m2*ell2)*9.810)/ellT
 
 # mixing matrix
 unmixing = np.array([[1.0, 1.0], [d, -d]]) # converts fl and fr (LR) to force and torque (FT)

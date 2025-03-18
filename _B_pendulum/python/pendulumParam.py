@@ -16,7 +16,7 @@ radius = 0.06 # Radius of circular part of pendulum
 
 # Initial Conditions
 z0 = 0.0                # ,m
-theta0 = 0.0*np.pi/180  # ,rads
+theta0 = 0*np.pi/180  # ,rads
 zdot0 = 0.0             # ,m/s
 thetadot0 = 0.0         # ,rads/s
 

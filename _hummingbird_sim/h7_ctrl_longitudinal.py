@@ -26,7 +26,7 @@ class ctrl_longitudinal:
 
         self.F = self.F_ctrl + F_fl
 
-        self.open_loop = self.b0 * self.F_ctrl / s^2
+        # self.open_loop = self.b0 * self.F_ctrl / s^2
 
         #  tuning parameters
         #tr = 0.8 # part (a)

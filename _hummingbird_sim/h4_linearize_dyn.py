@@ -112,9 +112,9 @@ u = sp.Matrix([Tau])
 A = sp.simplify(x_dot.jacobian(x).subs(equilibrium_subs))
 B = sp.simplify(x_dot.jacobian(u).subs(equilibrium_subs))
 
-# display('Linearized Lateral Dynamics (step 4):')
-# display(Math(vlatex(sp.simplify(A))))
-# display(Math(vlatex(sp.simplify(B))))
+display('Linearized Lateral Dynamics (step 4):')
+display(Math(vlatex(sp.simplify(A))))
+display(Math(vlatex(sp.simplify(B))))
 #%%
 # Substitute numerical values for the parameters
 A_num = sp.simplify(A.subs([(ell_1, P.ell1), (ell_2, P.ell2), (ell_T, P.ellT), (m1, P.m1), (ell_3x, P.ell3x), (ell_3y, P.ell3y), (ell_3z, P.ell3z), (m2, P.m2), (m3, P.m3), (g, P.g), (J1x, P.J1x), (J1y, P.J1y), (J1z, P.J1z), (J2x, P.J2x), (J2y, P.J2y), (J2z, P.J2z), (J3x, P.J3x), (J3y, P.J3y), (J3z, P.J3z)]))

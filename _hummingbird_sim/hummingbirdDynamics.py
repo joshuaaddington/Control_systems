@@ -61,8 +61,8 @@ class HummingbirdDynamics:
         return y
 
     def f(self, state, u):
-        f_l = u[0, 0] * self.km
-        f_r = u[1, 0] * self.km
+        f_l = u[0][0] * self.km
+        f_r = u[1][0] * self.km
 
         # Calculating the terms in the equations of motion.
         M = self.M(state, self.param_vals)  # mass matrix
