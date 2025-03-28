@@ -67,11 +67,11 @@ class ctrlPID:
         # initialize variables for integrator & differentiators
         #---------------------------------------------------
         self.integrator_phi = 0.
-        self.error_phi_d1 = 0.
+        self.error_phi_prev = 0.
         self.phi_dot = P.phidot0
-        self.phi_d1 = P.phi0
+        self.phi_prev = P.phi0
         self.theta_dot = P.thetadot0
-        self.theta_d1 = P.theta0
+        self.theta_prev = P.theta0
 
     def update(self, phi_r, y):
         theta = y[0][0]
@@ -84,11 +84,11 @@ class ctrlPID:
 
         # integrate error in phi
         self.integrator_phi = self.integrator_phi \
-            + (P.Ts / 2) * (error_phi + self.error_phi_d1)     
+            + (P.Ts / 2) * (error_phi + self.error_phi_prev)     
            
         # Compute derivative of phi
         self.phi_dot = (2.0*self.sigma - P.Ts) / (2.0*self.sigma + P.Ts) * self.phi_dot \
-            + (2.0 / (2.0*self.sigma + P.Ts)) * ((phi - self.phi_d1))
+            + (2.0 / (2.0*self.sigma + P.Ts)) * ((phi - self.phi_prev))
         
         # PID control - unsaturated
         theta_r_unsat = self.kp_phi * error_phi \
@@ -111,7 +111,7 @@ class ctrlPID:
 
         # differentiate theta
         self.theta_dot = (2.0*self.sigma - P.Ts) / (2.0*self.sigma + P.Ts) * self.theta_dot \
-            + (2.0 / (2.0*self.sigma + P.Ts)) * ((theta - self.theta_d1))
+            + (2.0 / (2.0*self.sigma + P.Ts)) * ((theta - self.theta_prev))
         
          # PD control on theta
         tau_unsat = self.kp_th * error_th \
@@ -121,9 +121,9 @@ class ctrlPID:
         tau = saturate(tau_unsat, P.tau_max)
 
         # update delayed variables
-        self.error_phi_d1 = error_phi
-        self.phi_d1 = phi
-        self.theta_d1 = theta
+        self.error_phi_prev = error_phi
+        self.phi_prev = phi
+        self.theta_prev = theta
         
         # return computed force
         return tau
