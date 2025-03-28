@@ -6,6 +6,7 @@ import numpy as np
 import pyqtgraph as pg
 import pyqtgraph.opengl as gl
 import pyqtgraph.Vector as Vector
+import signal
 
 
 class HummingbirdAnimation:
@@ -27,6 +28,9 @@ class HummingbirdAnimation:
         self.window.raise_()  # bring window to the front
         self.plot_initialized = False  # has the mav been plotted yet?
         self.vtol_plot = []
+
+        # Register <ctrl+c> signal handler to stop the simulation
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     def update(self, t: float, state: np.ndarray):
         # initialize the drawing the first time update() is called

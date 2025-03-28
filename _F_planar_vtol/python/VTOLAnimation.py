@@ -3,6 +3,7 @@ import matplotlib.patches as mpatches
 from matplotlib.widgets import Button
 import numpy as np
 import VTOLParam as P
+import signal
 
 # if you are having difficulty with the graphics,
 # try using one of the following backends.
@@ -34,6 +35,9 @@ class VTOLAnimation:
         self.exit_button.label.set_fontweight('bold')
         self.exit_button.label.set_fontsize(18)
         self.exit_button.on_clicked(lambda event: exit())
+
+        # Register <ctrl+c> signal handler to stop the simulation
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     def update(self, x, target=0.0):
         # Process inputs to function
