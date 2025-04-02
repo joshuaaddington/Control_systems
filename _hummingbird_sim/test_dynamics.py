@@ -1,50 +1,34 @@
-#%%
-# run this file to test your vectors and matrices from the hummingbirdDynamics.py file
+# use this file to test your dynamics file
 import numpy as np
 from hummingbirdDynamics import HummingbirdDynamics as dynamics
 import hummingbirdParam as P
-import pickle as pkl
+import testCases as TC
 
+# define test parameters
+P.Ts = .01
+plant = dynamics()
+numTests = 0
+numTestsPassed = 0
+    
+# test all test cases
+for initial_state, input, true_state in TC.dynamics_test_cases:
+    numTests += 1
+    initial_state = np.array(initial_state)
+    true_state = np.array(true_state)
+    plant.state = initial_state
+    plant.update(np.array(input))
+    actual_state = plant.state
+    error = np.linalg.norm(actual_state - true_state)
+    if error < TC.errorTolerance:
+        numTestsPassed += 1
+        print(f'Test #{numTests} passed!')
+        continue
+    print(f'Test #{numTests} failed with an error magnitude of {error}')
+    print(f"\tThe actual output was {actual_state.flatten()}")
+    print(f"\tIt should've been: {true_state.flatten()}")
 
-data = pkl.load(open(r"C:\Users\joshu\Documents\BYU\2025_Winter\Controls\Control_systems\Control_systems\_hummingbird_sim\test_matrices.pkl", "rb"))
-precision = 6
-
-# states are defined in the following order: [phi, theta, psi, phi_dot, theta_dot, psi_dot]
-states = [np.array([0, 0, 0, 0, 0, 0]).reshape(6, 1),
-          np.array([0.1, 0.1, -0.1, 0.1, -0.1, 0.1]).reshape(6, 1),
-          np.array([0.05, -0.3, 0.22, 0.2, 0.1, -0.1]).reshape(6, 1)]
-
-# inputs are defined in the following order: [f_l, f_r]
-inputs = [np.array([[0], [0]]),
-          np.array([[0.1], [0.1]]),
-          np.array([[0.05], [-0.05]])]
-
-hb_dynamics = dynamics(alpha=0.0)
-
-def test_matrix(name, actual, expected):
-    error = actual - expected
-    correct_indices = np.abs(error) < 1e-14
-    if correct_indices.all():
-        print(f"{name:>10}: PASS")
-    else:
-        incorrect_indices = np.argwhere(~correct_indices)
-        print(f"{name:>10}: FAIL")
-        for r,c in incorrect_indices:
-            print(f'{name:>20}[{r},{c}]: ', end='')
-            print(f'yours = {actual[r,c]:<{precision+9}.{precision}g} ', end='')
-            print(f'expected = {expected[r,c]:.{precision}g}')
-
-for i in range(len(states)):
-    M_test = hb_dynamics.M(states[i], hb_dynamics.param_vals)
-    C_test = hb_dynamics.C(states[i], hb_dynamics.param_vals)
-    dP_dq_test = hb_dynamics.dP_dq(states[i], hb_dynamics.param_vals)
-    tau_test = hb_dynamics.tau(states[i], inputs[i], hb_dynamics.param_vals)
-
-    print(f"test {i+1}:")
-    test_matrix("M", M_test, data['M'][i])
-    test_matrix("C", C_test, data['C'][i])
-    test_matrix("dP_dq", dP_dq_test, data['dP_dq'][i])
-    test_matrix("tau", tau_test, data['tau'][i])
-    print()
-
-# %%
+# display final results of the tests 
+if numTestsPassed == numTests:
+    print("\nExcellent work!! Your dynamics file has passed all of the tests!\n")
+else:
+    print(f"\nDarn, only {numTestsPassed}/{numTests} of the tests passed... Keep it up! You'll get it!\n")

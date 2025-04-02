@@ -28,9 +28,13 @@ m3 = .1905
 J3x = .0002222
 J3y = .0001956
 J3z = .000027
+JT = m1 * ell1**2 + m2 * ell2**2 + J2z + m3 * (ell3x**2 + ell3y**2) 
 km = g * (m1 * ell1 + m2 * ell2) / ellT  # need to find this experimentally for hardware
 beta = .001
 F_e = ((m1*ell1 + m2*ell2)*9.810)/ellT
+b_theta = ellT/(m1 * ell1**2 * m3*ell2**2 + J1y + J2y)
+b_psi = ellT * F_e / (JT + J1z)
+
 
 # mixing matrix
 unmixing = np.array([[1.0, 1.0], [d, -d]]) # converts fl and fr (LR) to force and torque (FT)
