@@ -41,10 +41,11 @@ class blockbeamDynamics:
 
     def f(self, state, u):
         # return xdot = f(x,u)
-        z = state[0][0]
-        theta = state[1][0]
-        zdot = state[2][0]
-        thetadot = state[3][0]
+        print("state:", state)
+        z = state[0,0]
+        theta = state[1,0]
+        zdot = state[2,0]
+        thetadot = state[3,0]
         F = u
 
         # The equations of motion.
@@ -55,8 +56,7 @@ class blockbeamDynamics:
                                             - self.m1*self.g*z*np.cos(theta)
                     - self.m2*self.g*self.length/2.0*np.cos(theta)
                     + self.length*F*np.cos(theta))
-        
-        # build xdot and return
+        thetaddot = thetaddot[0][0]
         xdot = np.array([[zdot], [thetadot], [zddot], [thetaddot]])
         
         return xdot
