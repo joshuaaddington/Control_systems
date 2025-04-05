@@ -44,6 +44,7 @@ class massDynamics:
 
         # The equations of motion.        
         zddot = (force - self.b*zdot - self.k*z)/self.m
+        zddot = zddot[0]
 
         # build xdot and return
         xdot = np.array([[zdot], [zddot]])
