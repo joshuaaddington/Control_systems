@@ -10,10 +10,10 @@ class ctrlLQR:
         # LQR Control Design with integrator and observer
         #--------------------------------------------------
         #  tuning parameters
-        Q = np.array([[1.0, 0.0, 0.0],   # theta
-                      [0.0, 1.0, 0.0],   # theta_dot
-                      [0.0, 0.0, 1.0]])  # e_theta_int
-        R = np.array([[1.0]])   # [tau]
+        Q = np.array([[100.0, 0.0, 0.0],   # theta
+                      [0.0, 0.1, 0.0],   # theta_dot
+                      [0.0, 0.0, 1000.0]])  # e_theta_int
+        R = np.array([[5.0]])   # [tau]
 
         # State Space Equations
         # xdot = A*x + B*u
