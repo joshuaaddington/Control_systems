@@ -1,23 +1,23 @@
 import numpy as np
 import control as cnt
 import armParam as P
+P.Ts = 0.001  # sample time for simulation, this is necessary if our observer poles get too large in magnitude!
 
 
-class ctrlObserver:
+class ctrlLQR:
     def __init__(self):
         #--------------------------------------------------
-        # State Feedback Control Design
+        # LQR Control Design with integrator and observer
         #--------------------------------------------------
         #  tuning parameters
-        tr = 0.4
-        zeta = 0.707
-        integrator_pole = 9
-        tr_obs = tr/10  # rise time frequency for observer
-        zeta_obs = 0.707  # damping ratio for observer
+        Q = np.array([[100.0, 0.0, 0.0],   # theta
+                      [0.0, 0.1, 0.0],   # theta_dot
+                      [0.0, 0.0, 1000.0]])  # e_theta_int
+        R = np.array([[5.0]])   # [tau]
 
         # State Space Equations
         # xdot = A*x + B*u
-        # y = C*x
+        # y_r = Cr*x
         self.A = np.array([[0.0, 1.0],
                           [0.0, -1.0 * P.b / P.m / (P.ell**2)]])
         self.B = np.array([[0.0],
@@ -25,35 +25,33 @@ class ctrlObserver:
         self.C = np.array([[1.0, 0.0]])
 
         # form augmented system
+        Cr = self.C
         A1 = np.vstack((np.hstack((self.A, np.zeros((2,1)))), 
-                        np.hstack((-self.C, np.zeros((1,1)))) ))
+                        np.hstack((-Cr, np.zeros((1,1)))) ))
         B1 = np.vstack( (self.B, 0.0) )
 
-        # gain calculation
-        wn = 2.2 / tr  # natural frequency
-        des_char_poly = np.convolve([1, 2*zeta*wn, wn**2],
-                                    [1, integrator_pole])
-        des_poles = np.roots(des_char_poly)
-        
         # Compute the gains if the system is controllable
         if np.linalg.matrix_rank(cnt.ctrb(A1, B1)) != 3:
             print("The system is not controllable")
         else:
-            K1 = cnt.place(A1, B1, des_poles)
-            self.K = K1[0][0:2]
-            self.ki = K1[0][2]
+            K1_lqr, _, _ = cnt.lqr(A1, B1, Q, R)
+            self.K = K1_lqr[0][0:2].reshape(1,2)
+            self.ki = K1_lqr[0][2]
+
         # observer design
-        wn_obs = 2.2 / tr_obs
-        des_obsv_char_poly = [1, 2*zeta_obs*wn_obs, wn_obs**2]
-        des_obsv_poles = np.roots(des_obsv_char_poly)
-        # Compute the gains if the system is controllable
+        controller_eig = np.linalg.eig(A1 - B1 @ K1_lqr)
+        des_obsv_poles = np.ones(2)*np.real(np.min(controller_eig.eigenvalues))*10 + np.array([0.1, -0.1])
+
+        # Compute the gains if the system is observable
+        Cm = self.C
         if np.linalg.matrix_rank(cnt.ctrb(self.A.T, self.C.T)) != 2:
             print("The system is not observerable")
         else:
-            self.L = cnt.place(self.A.T, self.C.T, des_obsv_poles).T
+            self.L = cnt.place(self.A.T, Cm.T, des_obsv_poles).T
         print('K: ', self.K)
         print('ki ', self.ki)
         print('L^T: ', self.L.T)
+
         #--------------------------------------------------
         # variables to implement integrator
         self.integrator = 0.0  # integrator
@@ -65,6 +63,7 @@ class ctrlObserver:
         self.tau_prev = 0.0  # control torque, delayed 1 sample
 
     def update(self, theta_r, y):
+    #def update(self, theta_r, state):
         # update the observer and extract theta_hat
         x_hat = self.update_observer(y)
         theta_hat = x_hat[0][0]
@@ -81,7 +80,7 @@ class ctrlObserver:
         tau_tilde = -self.K @ x_hat - self.ki * self.integrator
 
         # compute total torque
-        tau = saturate(tau_fl + tau_tilde[0], P.tau_max)
+        tau = saturate(tau_fl + tau_tilde[0, 0], P.tau_max)
         self.tau_prev = tau
 
         return tau, x_hat

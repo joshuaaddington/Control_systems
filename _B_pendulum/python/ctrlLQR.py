@@ -2,21 +2,17 @@ import numpy as np
 from scipy import signal
 import control as cnt
 import pendulumParam as P
+P.Ts = 0.001  # sample time for simulation, this is necessary if our observer poles get too large in magnitude!
 
-
-class ctrlObserver:
+class ctrlLQR:
     def __init__(self):
         #--------------------------------------------------
-        # State Feedback Control Design
+        # LQR Control Design with integrator and observer
         #--------------------------------------------------
         # tuning parameters
-        tr_z = 1.5        # rise time for position
-        tr_theta = 0.5    # rise time for angle
-        zeta_z = 0.707  # damping ratio position
-        zeta_th = 0.707  # damping ratio angle
-        integrator_pole = -2  # integrator pole
-        tr_z_obs = tr_z/5.0 # rise time for position
-        tr_theta_obs = tr_theta / 5.0  # rise time for angle
+        Q = np.diag([1.0, 1.0, 1.0, 1.0, 1.0])  # [z, theta, z_dot, theta_dot, e_z_int]
+        R = np.diag([1.0])  # [F]   
+
         # State Space Equations
         # xdot = A*x + B*u
         # y = C*x
@@ -33,6 +29,7 @@ class ctrlObserver:
                            [-3.0 / 2 / (.25 * P.m1 + P.m2) / P.ell]])
         self.C = np.array([[1.0, 0.0, 0.0, 0.0],
                            [0.0, 1.0, 0.0, 0.0]])
+
         # form augmented system
         Cr = np.array([[1, 0]]) @ self.C
         A1 = np.concatenate((
@@ -40,29 +37,19 @@ class ctrlObserver:
                 np.concatenate((-Cr, np.matrix([[0.0]])), axis=1)),
                 axis=0)
         B1 = np.concatenate((self.B, np.matrix([[0.0]])), axis=0)
-        # control gain calculation
-        wn_th = 2.2 / tr_theta  # natural frequency for angle
-        wn_z = 2.2 / tr_z  # natural frequency for position
-        des_char_poly = np.convolve(
-                np.convolve([1, 2 * zeta_z * wn_z, wn_z**2],
-                            [1, 2 * zeta_th * wn_th, wn_th**2]),
-                np.poly([integrator_pole]))
-        des_poles = np.roots(des_char_poly)
+
         # Compute the control gains if the system is controllable
         if np.linalg.matrix_rank(cnt.ctrb(A1, B1)) != 5:
             print("The system is not controllable")
         else:
-            K1 = cnt.place(A1, B1, des_poles)
-            self.K = K1[0][0:4]
-            self.ki = K1[0][4]
+            K1_lqr, _ , _ = cnt.lqr(A1, B1, Q, R)
+            self.K = K1_lqr[0][0:4].reshape(1, 4)
+            self.ki = K1_lqr[0][4]
             
         # compute observer gains
-        wn_z_obs = 2.2 / tr_z_obs
-        wn_th_obs = 2.2 / tr_theta_obs
-        des_obs_char_poly = np.convolve(
-                [1, 2 * zeta_z * wn_z_obs, wn_z_obs**2],
-                [1, 2 * zeta_th * wn_th_obs, wn_th_obs**2])
-        des_obs_poles = np.roots(des_obs_char_poly)
+        controller_eig = np.linalg.eig(A1 - B1 @ K1_lqr)
+        des_obs_poles = np.ones(4) * np.real(np.min(controller_eig.eigenvalues)) * 10 + np.array([-0.2, -0.1, 0.1, 0.2])
+
         # Compute the observer gains if the system is observable
         if np.linalg.matrix_rank(cnt.ctrb(self.A.T, self.C.T)) != 4:
             print("The system is not observable")
@@ -73,20 +60,17 @@ class ctrlObserver:
         print('K: ', self.K)
         print('ki: ', self.ki)
         print('L^T: ', self.L.T)
-        #--------------------------------------------------
-        # saturation limits
-        theta_max = 30.0 * np.pi / 180.0  # Max theta, rads
-        #--------------------------------------------------
+
         # variables to implement integrator
         self.integrator_z = 0.0  # integrator
-        self.error_z_d1 = 0.0  # error signal delayed by 1 sample
+        self.error_z_prev = 0.0  # error signal delayed by 1 sample
         # estimated state variables
         self.x_hat = np.array([
             [0.0],  # initial estimate for z_hat
             [0.0],  # initial estimate for theta_hat
             [0.0],  # initial estimate for z_hat_dot
             [0.0]])  # initial estimate for theta_hat_dot
-        self.F_d1 = 0.0  # Computed Force, delayed by one sample
+        self.F_prev = 0.0  # Computed Force, delayed by one sample
         
     def update(self, z_r, y):
         # update the observer and extract z_hat
@@ -95,12 +79,12 @@ class ctrlObserver:
         # integrate error
         error_z = z_r - z_hat
         self.integrator_z = self.integrator_z \
-            + (P.Ts / 2.0) * (error_z + self.error_z_d1)
-        self.error_z_d1 = error_z
+            + (P.Ts / 2.0) * (error_z + self.error_z_prev)
+        self.error_z_prev = error_z
         # Compute the state feedback controller
         F_unsat = -self.K @ x_hat - self.ki * self.integrator_z
-        F = saturate(F_unsat[0], P.F_max)
-        self.F_d1 = F
+        F = saturate(F_unsat[0,0], P.F_max)
+        self.F_prev = F
         return F, x_hat
 
     def update_observer(self, y_m):
@@ -115,7 +99,7 @@ class ctrlObserver:
     def observer_f(self, x_hat, y_m):
         # xhatdot = A*xhat + B*u + L(y-C*xhat)
         xhat_dot = self.A @ x_hat \
-                   + self.B * self.F_d1 \
+                   + self.B * self.F_prev \
                    + self.L @ (y_m-self.C @ x_hat)
         return xhat_dot
 
