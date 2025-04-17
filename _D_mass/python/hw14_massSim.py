@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import massParam as P
 from massDynamics import massDynamics
-from ctrlDisturbanceObserver import ctrlDisturbanceObserver
+from ctrlLQRmass import ctrlLQRmass
 from signalGenerator import signalGenerator
 from massAnimation import massAnimation
 from dataPlotter import dataPlotter
@@ -10,7 +10,7 @@ from dataPlotterObserver import dataPlotterObserver
 
 # instantiate satellite, controller, and reference classes
 mass = massDynamics(alpha=0.2)
-controller = ctrlDisturbanceObserver()
+controller = ctrlLQRmass()
 reference = signalGenerator(amplitude=0.5, frequency=0.04)
 disturbance = signalGenerator(amplitude=0.25)
 noise = signalGenerator(amplitude=0.001)

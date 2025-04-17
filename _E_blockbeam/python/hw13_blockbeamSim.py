@@ -6,7 +6,7 @@ from blockbeamAnimation import blockbeamAnimation
 from dataPlotter import dataPlotter
 from dataPlotterObserver import dataPlotterObserver
 from blockbeamDynamics import blockbeamDynamics
-from ctrlObserver import ctrlObserver
+from ctrlObserver1 import ctrlObserver
 
 
 # instantiate blockbeam, controller, and reference classes

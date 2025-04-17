@@ -6,7 +6,7 @@ from VTOLAnimation import VTOLAnimation
 from dataPlotter import dataPlotter
 from VTOLDynamics import VTOLDynamics
 from dataPlotterObserver import dataPlotterObserver
-from ctrlObserver import ctrlObserver
+from ctrlObserver2 import ctrlObserver
 
 # instantiate VTOL, controller, and reference classes
 VTOL = VTOLDynamics()

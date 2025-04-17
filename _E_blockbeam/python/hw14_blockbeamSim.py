@@ -6,13 +6,13 @@ from blockbeamAnimation import blockbeamAnimation
 from dataPlotter import dataPlotter
 from dataPlotterObserver import dataPlotterObserver
 from blockbeamDynamics import blockbeamDynamics
-from _E_blockbeam.python.ctrlDisturbanceObserver2 import ctrlDisturbanceObserver
+from ctrlLQRblockbeam import ctrlLQRblockbeam
 
 
 # instantiate blockbeam, controller, and reference classes
 blockbeam = blockbeamDynamics(alpha=0.2)
-controller = ctrlDisturbanceObserver()
-reference = signalGenerator(amplitude=0.125, frequency=0.05, y_offset=0.25)
+controller = ctrlLQRblockbeam()
+reference = signalGenerator(amplitude=0.125, frequency=0.1, y_offset=0.25)
 disturbance = signalGenerator(amplitude=0.5, frequency=0.0)
 noise_z = signalGenerator(amplitude=0.001)
 noise_th = signalGenerator(amplitude=0.001)

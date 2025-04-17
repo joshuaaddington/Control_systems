@@ -6,13 +6,13 @@ from VTOLAnimation import VTOLAnimation
 from dataPlotter import dataPlotter
 from VTOLDynamics import VTOLDynamics
 from dataPlotterObserver import dataPlotterObserver
-from ctrlDisturbanceObserver3 import ctrlDisturbanceObserver
+from ctrlLQRVTOL import ctrlLQRVTOL
 
 # instantiate VTOL, controller, and reference classes
 VTOL = VTOLDynamics(alpha=0.02)
-controller = ctrlDisturbanceObserver()
-z_reference = signalGenerator(amplitude=4.0, frequency=0.02, y_offset=5.0)
-h_reference = signalGenerator(amplitude=3.0, frequency=0.03, y_offset=5.0)
+controller = ctrlLQRVTOL()
+z_reference = signalGenerator(amplitude=4.0, frequency=0.05, y_offset=5.0)
+h_reference = signalGenerator(amplitude=3.0, frequency=0.06, y_offset=5.0)
 F_disturbance = signalGenerator(amplitude=2.0)
 tau_disturbance = signalGenerator(amplitude=0.5)
 z_noise = signalGenerator(amplitude=0.1)
