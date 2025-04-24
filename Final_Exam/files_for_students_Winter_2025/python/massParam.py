@@ -12,6 +12,8 @@ k1 = 0.05
 k2 = 0.02
 F_max = 5.0
 b = 0.1
+z_e = 1
+F_e = (-1/np.sqrt(2))*m*g + k1*z_e + k2*z_e**3
 
 # simulation parameters
 t_start = 0.0

@@ -5,12 +5,12 @@ from signalGenerator import signalGenerator
 from massAnimation import massAnimation
 from dataPlotter import dataPlotter
 from massDynamics import massDynamics
-from controllerObsv import controllerObsv
+from controllerStateSpace import controllerStateSpace
 from dataPlotterObserver import dataPlotterObserver
 
 # instantiate system, controller, and reference classes
 mass = massDynamics()
-controller = controllerObsv()
+controller = controllerStateSpace()
 reference = signalGenerator(amplitude=0.5, frequency=0.05)
 disturbance = signalGenerator(amplitude=0.1)
 noise = signalGenerator(amplitude=0.01)
@@ -35,7 +35,7 @@ while t < P.t_end:
     animation.update(mass.state)
     dataPlot.update(t, r, mass.state, u)
     dataPlotObserver.update(t, mass.state, xhat, d, dhat)
-    plt.pause(0.0001)
+    plt.pause(0.05)
 
 # Keeps the program from closing until the user presses a button.
 print('Press key to close')
